@@ -9,7 +9,7 @@ namespace Snow.Test
     {
         public static AuthenticationConfig Config => new ()
         {
-            BaseAddress = "https://someUrl.com",
+            BaseAddress = "https://someUrl.com/api/now/",
             ClientSecret = "Blablabla"
         };
         public static string tableName => "sys_user";

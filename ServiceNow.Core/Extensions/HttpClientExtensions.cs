@@ -20,11 +20,11 @@ namespace SNow.Core.Extensions
         /// <summary>
         /// Use to handle GET communications between API's
         /// </summary>
-        /// <typeparam name="TValue">A class containing or not props with attributes of type [JsonPropertyName]</typeparam>
+        /// <typeparam name="T">A class containing or not props with attributes of type [JsonPropertyName]</typeparam>
         /// <param name="requestUri">Full request URI</param>
         /// <param name="authenticate">Execute the authentication method</param>
         /// <returns>An instance of the provided class, can also be a List<TValue></returns>
-        public static async Task<TValue> GetActionResultAsync<TValue>(this HttpClient client, string requestUri, Func<Task<string>> authenticate = null, ILogger logger = null)
+        public static async Task<T> GetActionResultAsync<T>(this HttpClient client, string requestUri, Func<Task<string>> authenticate = null, ILogger logger = null)
         {
             return await Policy.Handle<Exception>()
                 .RetryAsync(2, (exception, retry) =>
@@ -32,7 +32,7 @@ namespace SNow.Core.Extensions
                     logger?.LogError("Error in HttpGet from {link}: {e}", requestUri, exception.InnerException);
                     logger?.LogError("Retrying turn: {e}", retry);
                 })
-                .ExecuteAsync<TValue>(async () =>
+                .ExecuteAsync<T>(async () =>
                 {
                     var response = await client.GetAsync(requestUri);
                     if (response.StatusCode == HttpStatusCode.Unauthorized && authenticate != null)
@@ -43,20 +43,25 @@ namespace SNow.Core.Extensions
                     }
 
                     await HandleUnssucessfullRequestAsync(response);
-                    return await response.DeserializeAsync<TValue>();
+
+                    //In case you try to get an specif ID but is was not found.
+                    if (!response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        return default;
+
+                    return await response.DeserializeAsync<T>();
                 });
         }
 
         /// <summary>
         /// Use to handle POST communication between API's
         /// </summary>
-        /// <typeparam name="TValue">A class containing props with attributes of type [JsonPropertyName]</typeparam>
+        /// <typeparam name="T">A class containing props with attributes of type [JsonPropertyName]</typeparam>
         /// <param name="client"></param>
         /// <param name="requestUri">Full request uri</param>
         /// <param name="data">Data to be sent, usually a model</param>
         /// <param name="authenticate"></param>
         /// <returns>An instance of the provided class, can also be a List TValue </returns>
-        public static async Task<TValue> PostActionResultAsync<TValue>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate)
+        public static async Task<T> PostActionResultAsync<T>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate)
         {
             var json = JsonSerializer.Serialize(data, JsonConverterOptions.CustomSerializationOptions);
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
@@ -73,27 +78,27 @@ namespace SNow.Core.Extensions
                     httpContent.Dispose();
                 }
 
-                if (typeof(TValue) == typeof(HttpStatusCode))
+                if (typeof(T) == typeof(HttpStatusCode))
                 {
                     var status = response.StatusCode;
-                    return (TValue)Convert.ChangeType(status, typeof(TValue));
+                    return (T)Convert.ChangeType(status, typeof(T));
                 }
 
                 await HandleUnssucessfullRequestAsync(response);
-                return await response.DeserializeAsync<TValue>();
+                return await response.DeserializeAsync<T>();
             }
         }
 
         /// <summary>
         /// Use to handle PUT communication between API's
         /// </summary>
-        /// <typeparam name="TValue">A class containing props with attributes of type [JsonPropertyName]</typeparam>
+        /// <typeparam name="T">A class containing props with attributes of type [JsonPropertyName]</typeparam>
         /// <param name="client"></param>
         /// <param name="requestUri">Full request uri</param>
         /// <param name="data">Data to be sent, usually a model</param>
         /// <param name="authenticate"></param>
         /// <returns>An instance of the provided class, can also be a List TValue </returns>
-        public static async Task<TValue> PutActionResultAsync<TValue>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate)
+        public static async Task<T> PutActionResultAsync<T>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate)
         {
             var json = JsonSerializer.Serialize(data, JsonConverterOptions.CustomSerializationOptions);
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
@@ -110,14 +115,14 @@ namespace SNow.Core.Extensions
                     httpContent.Dispose();
                 }
 
-                if (typeof(TValue) == typeof(HttpStatusCode))
+                if (typeof(T) == typeof(HttpStatusCode))
                 {
                     var status = response.StatusCode;
-                    return (TValue)Convert.ChangeType(status, typeof(TValue));
+                    return (T)Convert.ChangeType(status, typeof(T));
                 }
 
                 await HandleUnssucessfullRequestAsync(response);
-                return await response.DeserializeAsync<TValue>();
+                return await response.DeserializeAsync<T>();
 
             }
         }
@@ -131,6 +136,8 @@ namespace SNow.Core.Extensions
                 {
                     case HttpStatusCode.Unauthorized:
                         throw new UnauthorizedAccessException($"Could not Authenticate in ServiceNow! Status: {response.StatusCode}, Reason: {response.ReasonPhrase}, Content: {content}");
+                    case HttpStatusCode.NotFound:
+                        break;
                     default:
                         throw new HttpRequestException($"Error while requesting to ServiceNow Status: {response.StatusCode}, Reason: {response.ReasonPhrase}, Content: {content}");
                 }

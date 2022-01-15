@@ -12,14 +12,16 @@ namespace SNow.Core
         string Token { get; set; }
         string BaseAddress { get; }
 
+        string BasicAuthParams { get; }
+
         /// <summary>
         /// Set the table to be used
         /// </summary>
         /// <typeparam name="T">Model representing the return type, can use attributes to automatic mapping</typeparam>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        ITableAPI<T> UsingTable<T>(string tableName, ILogger logger = null) where T : ServiceNowBaseModel;
-        ITableAPI<T> UsingTable<T>(ILogger logger = null) where T : ServiceNowBaseModel;
+        ITableApi<T> UsingTable<T>(string tableName, ILogger logger = null) where T : ServiceNowBaseModel;
+        ITableApi<T> UsingTable<T>(ILogger logger = null) where T : ServiceNowBaseModel;
         ITableAPI UsingTable(string tableName, ILogger logger = null);
 
         ICatalogService UsingCatalog(Guid catalogItemId);
@@ -27,7 +29,6 @@ namespace SNow.Core
 
         //IImportSet<T> UsingImportSet<T>(string tableName) where T : ServiceNowBaseModel;
         IImportSet UsingImportSet(string tableName);
-
 
         Task<string> AuthenticateAsync();
     }

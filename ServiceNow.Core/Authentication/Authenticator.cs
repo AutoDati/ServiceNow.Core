@@ -73,8 +73,8 @@ namespace SNow.Core.Authentication
                 return false;
             }
 
-            else
-                throw new Exception("You must choose between using client secret or certificate. Please update appsettings.json file.");
+            Console.WriteLine("You are not using client secret or certificate. Those are preferable and are set in appsettings.json file.");
+            return false;
         }
 
         private static X509Certificate2 ReadCertificate(string certificateName)

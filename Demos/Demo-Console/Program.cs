@@ -14,8 +14,8 @@ namespace Test_Console
         static async System.Threading.Tasks.Task Main(string[] args)
         {
             ConsoleColor.Green.WriteLine("Service Now Console Demo! (with service account)");
-            var config = AuthenticationConfig.ReadFromJsonFile("appsettings.json");
-
+            //var config = AuthenticationConfig.ReadFromJsonFile("appsettings.json");
+            var config = BasicAuthenticationConfig.ReadFromJsonFile("appsettings.json");
             try
             {
                 //Typed Version...
@@ -28,11 +28,11 @@ namespace Test_Console
                 //    .WithQuery(x => $"{x.Name} like Branco and {x.Country} = BR");
                 //var users = await usersTable.ToListAsync();
 
-                var LanID = "SA\\EBBRANC";
+                var name = "Jimmie";
                 var usersTable = ServiceNow
                     .UsingTable<User>("sys_user")
                     .Limit(2)
-                    .WithQuery(x => $"user_name = {LanID}");
+                    .Where(x => x.Name.Contains(name));
 
                 var users = await usersTable.ToListAsync();
 
@@ -49,7 +49,17 @@ namespace Test_Console
 
                 var someUser = await usersTable.GetByIdAsync(new Guid("1e114e1f1b08a8107b9e8734ec4bcb4a"));
 
-                ConsoleColor.Blue.WriteLine($"user ={someUser.Id}: {someUser.Name}");
+                if(someUser == null)
+                    ConsoleColor.Red.WriteLine($"user not found");
+                else
+                    ConsoleColor.Blue.WriteLine($"user ={someUser.Id}: {someUser.Name}");
+
+                someUser = await usersTable.GetByIdAsync(new Guid("02826bf03710200044e0bfc8bcbe5d55"));
+
+                if (someUser == null)
+                    ConsoleColor.Red.WriteLine($"user not found");
+                else
+                    ConsoleColor.Blue.WriteLine($"user ={someUser.Id}: {someUser.Name}");
 
                 //Non Typed Version...
                 ConsoleColor.Yellow.WriteLine($"Not Typed Example!");
@@ -60,7 +70,7 @@ namespace Test_Console
                     .UsingTable("sys_user")
                     //.Select(new[] { "country", "state", "name", "u_city_code", "email", "user_name", "sys_id"})
                     .Limit(2)
-                    .WithQuery("name like Branco and country = BR");
+                    .WithQuery("name like Jimmie and email like zarzyckiR");
                 ConsoleColor.Red.WriteLine(usersTableNotTyped.RequestUrl);
                 var usersNotTyped = await usersTableNotTyped.ToListAsync();
 
@@ -71,7 +81,7 @@ namespace Test_Console
                 }
                 ConsoleColor.Green.WriteLine("✔ Done...");
 
-                var someNotTypedUser = await usersTableNotTyped.GetByIdAsync(new Guid("1e114e1f1b08a8107b9e8734ec4bcb4a"));
+                var someNotTypedUser = await usersTableNotTyped.GetByIdAsync(new Guid("02826bf03710200044e0bfc8bcbe5d55"));
 
                 ConsoleColor.Magenta.WriteLine($"User: {someNotTypedUser.GetProperty("sys_id")} => {someNotTypedUser.GetProperty("name")} found!!!");
 

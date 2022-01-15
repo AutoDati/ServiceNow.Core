@@ -1,12 +1,12 @@
-﻿# Service Now Fluent Api
+﻿# Service Now Fluent API
 
-Easy to connect, and interact with Service Now Api
+Easy to connect, and interact with Service Now API
 
 ⚗ This library is in beta state, feel free to test and contribute
 
 ## Description
 
-Make request using fluent api!
+Make request using fluent API!
 
 - 🧰 Easy to use, based on the config file it connects and authenticate without one line of code
 - 🔑 Typed data, you can use properties to manipulate and restrict requests

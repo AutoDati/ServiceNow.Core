@@ -78,7 +78,7 @@ namespace SNow.Core.Utils
             /// if it is an object like
             /// <code>
             /// business_service": {
-            ///    "link": "https://emacc.service-now.com/api/now/table/cmdb_ci_service/ce02b8461b88f01030cb635bbc4bcb6d",
+            ///    "link": "https://dev.service-now.com/api/now/table/cmdb_ci_service/ce02b8461b88f01030cb635bbc4bcb6d",
             ///    "value": "ce02b8461b88f01030cb635bbc4bcb6d"
             ///  }
             /// </code>
@@ -147,7 +147,7 @@ namespace SNow.Core.Utils
             /// if it is an object like
             /// <code>
             /// business_service": {
-            ///    "link": "https://emacc.service-now.com/api/now/table/cmdb_ci_service/ce02b8461b88f01030cb635bbc4bcb6d",
+            ///    "link": "https://dev.service-now.com/api/now/table/cmdb_ci_service/ce02b8461b88f01030cb635bbc4bcb6d",
             ///    "value": "ce02b8461b88f01030cb635bbc4bcb6d"
             ///  }
             /// </code>

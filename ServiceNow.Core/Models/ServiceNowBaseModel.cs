@@ -10,6 +10,9 @@ namespace SNow.Core.Models
     /// </summary>
     public class ServiceNowBaseModel
     {
+        /// <summary>
+        /// Ignore when writing
+        /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("sys_id")]
         public Guid? Id { get; set; }

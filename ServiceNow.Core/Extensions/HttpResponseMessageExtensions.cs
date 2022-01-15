@@ -17,7 +17,7 @@ namespace SNow.Core.Extensions
         /// <returns></returns>
         public static async Task<TValue> DeserializeAsync<TValue>(this HttpResponseMessage response)
         {
-            if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode && response.StatusCode != System.Net.HttpStatusCode.NotFound)
             {
                 ConsoleColor.Red.WriteLine($"Failed to call the web API: {response.StatusCode}");
                 Console.WriteLine();

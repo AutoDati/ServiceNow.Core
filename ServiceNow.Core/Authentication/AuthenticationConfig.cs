@@ -64,12 +64,12 @@ namespace SNow.Core.Authentication
         public string CertificateName { get; set; }
 
         /// <summary>
-        /// Web Api base URL
+        /// Web API base URL
         /// </summary>
         public string BaseAddress { get; set; }
 
         /// <summary>
-        /// Web Api scope. With client credentials flows, the scopes is ALWAYS of the shape "resource/.default"
+        /// Web API scope. With client credentials flows, the scopes is ALWAYS of the shape "resource/.default"
         /// </summary>
         public string Scope { get; set; }
 

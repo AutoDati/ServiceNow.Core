@@ -48,7 +48,7 @@ namespace SNow.Core
 
     }
 
-    public interface ITableAPI<TModel> where TModel : ServiceNowBaseModel
+    public interface ITableApi<TModel> where TModel : ServiceNowBaseModel
     {
         string RequestUrl { get; }
 
@@ -58,9 +58,9 @@ namespace SNow.Core
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        ITableAPI<TModel> Where(Expression<Func<TModel, bool>> expr);
+        ITableApi<TModel> Where(Expression<Func<TModel, bool>> expr);
 
-        ITableAPI<TModel> SetHeaders(List<KeyValuePair<string, string>> entries);
+        ITableApi<TModel> SetHeaders(List<KeyValuePair<string, string>> entries);
         /// <summary>
         /// The query must have only those operators
         /// and, or, like, =, !=, startsWith, endsWith
@@ -68,22 +68,22 @@ namespace SNow.Core
         /// </summary>
         /// <param name="expression">String that has access to the table model
         /// ex.: x => $"{x.Name} like Something and {x.Age} = 10"</param>
-        ITableAPI<TModel> WithQuery(Expression<Func<TModel, string>> expression);
+        ITableApi<TModel> WithQuery(Expression<Func<TModel, string>> expression);
         //ITableAPI<TModel> Where(Expression<Func<TModel, bool>> expression);
         /// <summary>
         /// The maximum number of results returned per page (default: 10,000)
         /// </summary>
         /// <param name="limit"></param>
         /// <returns></returns>
-        ITableAPI<TModel> Limit(int limit);
-        ITableAPI<TModel> OrderBy(Expression<Func<TModel, object>> expression);
-        ITableAPI<TModel> OrderByDesc(Expression<Func<TModel, object>> expression);
+        ITableApi<TModel> Limit(int limit);
+        ITableApi<TModel> OrderBy(Expression<Func<TModel, object>> expression);
+        ITableApi<TModel> OrderByDesc(Expression<Func<TModel, object>> expression);
         /// <summary>
         /// List of properties to return,
         /// impacts the size of the response
         /// </summary>
         /// <param name="expressions">you can pass more than one parameter ex.: x=> x.Name, x=> x.Age</param>
-        ITableAPI<TModel> Select(params Expression<Func<TModel, object>>[] expressions);
+        ITableApi<TModel> Select(params Expression<Func<TModel, object>>[] expressions);
         /// <summary>
         /// Makes the actual Http Request
         /// </summary>

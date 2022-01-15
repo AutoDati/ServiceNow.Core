@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -26,7 +27,7 @@ namespace SNow.Core.Utils
                 var attr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
                 if (attr != null)
                 {
-                    Console.WriteLine($"{prop.Name} : {attr.Name}");
+                    Debug.Print($"{prop.Name} : {attr.Name}");
                     jsonProperties.Add((prop.Name, attr.Name));
                 }
             }
@@ -47,7 +48,7 @@ namespace SNow.Core.Utils
 
                     query = query.Replace(" Is ", " INSTANCEOF ");
                     query = query.Replace(className, attr.Name);
-                    Console.WriteLine(attr.Name);
+                    Debug.Print(attr.Name);
 
             break;
             }
@@ -198,8 +199,8 @@ namespace SNow.Core.Utils
         #endregion
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
-            Console.WriteLine("Visiting Method Call {0}", node);
-            Console.WriteLine(node.Method.Name);
+            Debug.Print("Visiting Method Call {0}", node);
+           Debug.Print(node.Method.Name);
 
             if (node.ToString().Contains(".Length"))
                 throw new InvalidOperationException("use o .Length is not allowed!");
@@ -207,24 +208,24 @@ namespace SNow.Core.Utils
             switch (node.Method.Name)
             {
                 case "Contains":
-                    Console.WriteLine(" replace with LIKE");
+                    Debug.Print(" replace with LIKE");
                     query = query.Replace(".Contains(", " LIKE ");
                     break;
                 case "StartsWith":
                     query = query.Replace(".StartsWith(", " STARTSWITH ");
-                    Console.WriteLine(" replace with StartWith");
+                    Debug.Print(" replace with StartWith");
                     break;
                 case "EndsWith":
                     query = query.Replace(".EndsWith(", " ENDSWITH ");
-                    Console.WriteLine(" replace with EndsWith");
+                    Debug.Print(" replace with EndsWith");
                     break;
                 case "IsNullOrEmpty":
                     query = query.Replace($"Not(IsNullOrEmpty({node.Arguments[0]}))", $"{node.Arguments[0]}ISNOTEMPTY");
                     query = query.Replace($"IsNullOrEmpty({node.Arguments[0]})", $"{node.Arguments[0]}ISEMPTY");
-                    Console.WriteLine(" replace with ISEMPTY");
+                    Debug.Print(" replace with ISEMPTY");
                     break;
                 default:
-                    Console.WriteLine("Throw Error here????");
+                    Debug.Print("Throw Error here????");
                     break;
             }
 
@@ -233,7 +234,7 @@ namespace SNow.Core.Utils
 
         protected override Expression VisitConditional(ConditionalExpression node)
         {
-            Console.WriteLine("Visiting Conditional {0}", node);
+            Debug.Print("Visiting Conditional {0}", node);
 
             // Recurse down to see if we can simplify...
             var expression = Visit(node.Test);
@@ -251,7 +252,7 @@ namespace SNow.Core.Utils
 
         protected override Expression VisitConstant(ConstantExpression node)
         {
-            Console.WriteLine("Visiting Constant: {0} = {1}", node, node.Value);
+            Debug.Print("Visiting Constant: {0} = {1}", node, node.Value);
             if (!node.ToString().Contains("value("))
                 query = query.Replace(node.ToString(), node.Value.ToString());
 
@@ -261,7 +262,7 @@ namespace SNow.Core.Utils
 
         protected override Expression VisitBinary(BinaryExpression node)
         {
-            Console.WriteLine("Visiting Binary {0}", node);
+            Debug.Print("Visiting Binary {0}", node);
             var nodeString = node.ToString();
             if (nodeString[0] == '(' && nodeString[nodeString.Length - 1] == ')')
                 query = query.Replace(nodeString, nodeString.Substring(1, nodeString.Length - 2));
@@ -269,7 +270,7 @@ namespace SNow.Core.Utils
             {
                 #region Replace operator
                 case ExpressionType.TypeIs:
-                    Console.WriteLine("Is ...");
+                    Debug.Print("Is ...");
                     break;
                 case ExpressionType.And:
                     query = query.Replace(nameof(ExpressionType.And), " ^ ");
@@ -298,8 +299,8 @@ namespace SNow.Core.Utils
                 //TODO: check if works in SNow
                 case ExpressionType.GreaterThanOrEqual:
                 case ExpressionType.LessThanOrEqual:
-                    Console.WriteLine("Replace with > < => ???");
-                    Console.WriteLine("Check How to handle {0}", node.NodeType);
+                    Debug.Print("Replace with > < => ???");
+                    Debug.Print("Check How to handle {0}", node.NodeType);
                     break;
                 #endregion
                 default:
@@ -310,7 +311,7 @@ namespace SNow.Core.Utils
 
         protected override Expression VisitMember(MemberExpression node)
         {
-            Console.WriteLine("Visiting Member: {0} => is parameter? {1}", node, node.Expression == arg);
+            Debug.Print("Visiting Member: {0} => is parameter? {1}", node, node.Expression == arg);
 
             // Recurse down to see if we can simplify...
             var expression = Visit(node.Expression);
@@ -324,14 +325,14 @@ namespace SNow.Core.Utils
                 if (member is FieldInfo)
                 {
                     object value = ((FieldInfo)member).GetValue(container);
-                    Console.WriteLine("Got value: {0}", value);
+                    Debug.Print("Got value: {0}", value);
                     query = query.Replace((node as Expression).ToString(), value.ToString());
                     return Expression.Constant(value);
                 }
                 if (member is PropertyInfo)
                 {
                     object value = ((PropertyInfo)member).GetValue(container, null);
-                    Console.WriteLine("Got value 2: {0}", value);
+                    Debug.Print("Got value 2: {0}", value);
                     return Expression.Constant(value);
                 }
             }
