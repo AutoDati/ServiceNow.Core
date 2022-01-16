@@ -135,3 +135,8 @@ _NCrunch*
 /InitialSetup/.vs/InitialSetup/DesignTimeBuild
 /.vs
 /InitialSetup
+
+# Automatic documentation
+node_modules
+ServiceNow.Core/Docs/*.md
+!ServiceNow.Core/Docs/index.md

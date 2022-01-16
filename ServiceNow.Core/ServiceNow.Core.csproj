@@ -1,4 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup Label="Docs">
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DefaultDocumentationFolder>$(MSBuildProjectDirectory)/Docs</DefaultDocumentationFolder>
+		<DefaultDocumentationGeneratedAccessModifiers>Public</DefaultDocumentationGeneratedAccessModifiers>
+		<DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
+		<DefaultDocumentationFileNameMode>Name</DefaultDocumentationFileNameMode>
+	</PropertyGroup>
 	<PropertyGroup>
 		<TargetFrameworks>net472;netcoreapp3.1;net5.0</TargetFrameworks>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -21,6 +28,10 @@ This Package also handle authentication</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="DefaultDocumentation" Version="0.7.9">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
@@ -41,9 +52,6 @@ This Package also handle authentication</Description>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+	  <None Include="Docs\.vitepress\config.js" />
 	</ItemGroup>
 </Project>
