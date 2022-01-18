@@ -24,6 +24,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: yarn --cwd ./ServiceNoe.Core
-    - run: yarn dev:build --if-present
+    - run: yarn docs:build --if-present
     - run: ./ServiceNow.Core/deploy.sh
       shell: bash
