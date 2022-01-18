@@ -23,10 +23,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-          token: ${{ secrets.GITHUB_TOKEN }}
     - run: yarn --cwd ./ServiceNoe.Core
     - run: yarn docs:build --if-present
-    - run: ls -a
-    - run: ./deploy.sh
-      shell: bash
+    
+    - name: Publish generated content to GitHub Pages
+      uses: tsunematsu21/actions-publish-gh-pages@v1.0.2
+      with:
+          dir: Docs/.vitepress/dist
+          branch: gh-pages
+          token: ${{ secrets.ACCESS_TOKEN }}
+    #- run: ./deploy.sh
+    #  shell: bash
