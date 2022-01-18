@@ -26,5 +26,5 @@ jobs:
     - run: yarn --cwd ./ServiceNoe.Core
     - run: yarn docs:build --if-present
     - run: ls -a
-    - run: ../deploy.sh
+    - run: ./deploy.sh
       shell: bash
