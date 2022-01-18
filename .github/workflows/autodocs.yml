@@ -23,8 +23,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          token: ${{ secrets.GITHUB_TOKEN }}
     - run: yarn --cwd ./ServiceNoe.Core
     - run: yarn docs:build --if-present
     - run: ls -a
