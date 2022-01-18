@@ -138,5 +138,6 @@ _NCrunch*
 
 # Automatic documentation
 node_modules
+dist
 ServiceNow.Core/Docs/*.md
-!ServiceNow.Core/Docs/index.md
+!ServiceNow.Core/Docs/**/

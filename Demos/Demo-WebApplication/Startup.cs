@@ -72,7 +72,7 @@ namespace Demo_WebApplication
 
             var authConfig = AuthenticationConfig.ReadFromConfiguration(Configuration.GetSection("AzureAD"));
 
-            services.AddScoped<IServiceNow, ServiceNow>();
+            services.AddSingleton<IServiceNow>(new ServiceNow(authConfig));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -23,7 +23,7 @@ namespace SNow.Core.Extensions
         /// <typeparam name="T">A class containing or not props with attributes of type [JsonPropertyName]</typeparam>
         /// <param name="requestUri">Full request URI</param>
         /// <param name="authenticate">Execute the authentication method</param>
-        /// <returns>An instance of the provided class, can also be a List<TValue></returns>
+        /// <returns>An instance of the provided class, can also be a List<T></returns>
         public static async Task<T> GetActionResultAsync<T>(this HttpClient client, string requestUri, Func<Task<string>> authenticate = null, ILogger logger = null)
         {
             return await Policy.Handle<Exception>()
@@ -60,7 +60,7 @@ namespace SNow.Core.Extensions
         /// <param name="requestUri">Full request uri</param>
         /// <param name="data">Data to be sent, usually a model</param>
         /// <param name="authenticate"></param>
-        /// <returns>An instance of the provided class, can also be a List TValue </returns>
+        /// <returns>An instance of the provided class, can also be a List T </returns>
         public static async Task<T> PostActionResultAsync<T>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate)
         {
             var json = JsonSerializer.Serialize(data, JsonConverterOptions.CustomSerializationOptions);
@@ -97,7 +97,7 @@ namespace SNow.Core.Extensions
         /// <param name="requestUri">Full request uri</param>
         /// <param name="data">Data to be sent, usually a model</param>
         /// <param name="authenticate"></param>
-        /// <returns>An instance of the provided class, can also be a List TValue </returns>
+        /// <returns>An instance of the provided class, can also be a List T</returns>
         public static async Task<T> PutActionResultAsync<T>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate)
         {
             var json = JsonSerializer.Serialize(data, JsonConverterOptions.CustomSerializationOptions);

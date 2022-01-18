@@ -15,7 +15,7 @@ namespace Demo_WebApplication.Extensions
             {
                 if (!context.User.Identity.IsAuthenticated)
                 {
-                    await context.ChallengeAsync();
+                    //await context.ChallengeAsync();
                 }
                 else
                 {

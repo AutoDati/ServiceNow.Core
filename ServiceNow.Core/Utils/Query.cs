@@ -10,6 +10,11 @@ namespace SNow.Core.Utils
     /// </summary>
     public static class Query
     {
+        /// <summary>
+        /// Parse query to ServiceNow format
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public static string Parse(string query)
         {
             var response = Regex.Replace(query, @"\s+", " ");

@@ -17,9 +17,9 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("ServiceNow.Core.Test")]
 namespace SNow.Core
 {
-    public class Table : TableBase, ITableAPI
+    public class Table : TableBase, ITable
     {
-
+        ///<inheritdoc/>
         public Table(IServiceNow serviceNow, string tableName, ILogger logger) : base(serviceNow, tableName, logger)
         {
         }
@@ -32,31 +32,31 @@ namespace SNow.Core
 
         }
 
-        public ITableAPI Limit(int limit)
+        public ITable Limit(int limit)
         {
             _pageSize = limit;
             return this;
         }
 
-        public ITableAPI OrderBy(string orderBy)
+        public ITable OrderBy(string orderBy)
         {
             _order += string.IsNullOrEmpty(_order) ? "ORDERBY" + orderBy : "^ORDERBY" + orderBy;
             return this;
         }
 
-        public ITableAPI OrderByDesc(string orderByDesc)
+        public ITable OrderByDesc(string orderByDesc)
         {
             _order += string.IsNullOrEmpty(_order) ? "ORDERBYDESC" + orderByDesc : "^ORDERBYDESC" + orderByDesc;
             return this;
         }
 
-        public ITableAPI Select(string[] fields)
+        public ITable Select(string[] fields)
         {
             _select = fields.ToList();
             return this;
         }
 
-        public ITableAPI SetHeaders(List<KeyValuePair<string, string>> entries)
+        public ITable SetHeaders(List<KeyValuePair<string, string>> entries)
         {
             foreach (var entry in entries)
             {
@@ -74,7 +74,8 @@ namespace SNow.Core
             return result;
         }
 
-        public ITableAPI WithQuery(string query)
+        ///<inheritdoc/>
+        public ITable WithQuery(string query)
         {
             _query = Query.Parse(query);
             _currentPage = 0;
@@ -101,23 +102,23 @@ namespace SNow.Core
             return result;
         }
     }
-    public class Table<TModel> : TableBase, ITableApi<TModel> where TModel : ServiceNowBaseModel
+    public class Table<T> : TableBase, ITable<T> where T : ServiceNowBaseModel
     {
         private List<(string PropName, string AttName)> _props = new List<(string PropName, string AttName)>();
         public string _where;
 
         public Table(IServiceNow serviceNow, string tableName, ILogger logger = null) : base(serviceNow, tableName, logger)
         {
-            _select = ClassReflections.GetPropertieNamesInJsonFormat<TModel>();
+            _select = ClassReflections.GetPropertieNamesInJsonFormat<T>();
             _tableName = tableName;
-            _props = ClassReflections.GetJsonPropertyNameData<TModel>();
+            _props = ClassReflections.GetJsonPropertyNameData<T>();
         }
 
         public Table(IServiceNow serviceNow, ILogger logger = null) : base(serviceNow, "", logger)
         {
-            _select = ClassReflections.GetPropertieNamesInJsonFormat<TModel>();
-            _props = ClassReflections.GetJsonPropertyNameData<TModel>();
-            var attrs = typeof(TModel).GetCustomAttributes(typeof(SnowTableAttribute), true);
+            _select = ClassReflections.GetPropertieNamesInJsonFormat<T>();
+            _props = ClassReflections.GetJsonPropertyNameData<T>();
+            var attrs = typeof(T).GetCustomAttributes(typeof(SnowTableAttribute), true);
 
             if (attrs.Length < 1)
                 throw new ArgumentNullException("SnowTable", "The Class is missing SnowTable Attribute");
@@ -134,13 +135,16 @@ namespace SNow.Core
                 _tableName = tableNameAttr.Name;
             }
         }
-        public ITableApi<TModel> Limit(int limit)
+
+        ///<inheritdoc/>
+        public ITable<T> Limit(int limit)
         {
             _pageSize = limit;
             return this;
         }
 
-        public ITableApi<TModel> OrderBy(Expression<Func<TModel, object>> expression)
+        ///<inheritdoc/>
+        public ITable<T> OrderBy(Expression<Func<T, object>> expression)
         {
             var propName = (expression.Body as MemberExpression ??
                      ((UnaryExpression)expression.Body).Operand as MemberExpression).Member.Name;
@@ -149,7 +153,8 @@ namespace SNow.Core
             return this;
         }
 
-        public ITableApi<TModel> OrderByDesc(Expression<Func<TModel, object>> expression)
+        ///<inheritdoc/>
+        public ITable<T> OrderByDesc(Expression<Func<T, object>> expression)
         {
             var propName = (expression.Body as MemberExpression ??
                    ((UnaryExpression)expression.Body).Operand as MemberExpression).Member.Name;
@@ -158,7 +163,8 @@ namespace SNow.Core
             return this;
         }
 
-        public ITableApi<TModel> Select(params Expression<Func<TModel, object>>[] expressions)
+        ///<inheritdoc/>
+        public ITable<T> Select(params Expression<Func<T, object>>[] expressions)
         {
             _select = new List<string>();
             foreach (var propertyLambda in expressions)
@@ -171,9 +177,10 @@ namespace SNow.Core
             return this;
         }
 
-        public ITableApi<TModel> Where(Expression<Func<TModel, bool>> expr)
+        ///<inheritdoc/>
+        public ITable<T> Where(Expression<Func<T, bool>> expr)
         {
-            var visitor = new PrintingVisitor<TModel>(expr);
+            var visitor = new PrintingVisitor<T>(expr);
             visitor.Visit(expr);
             _query = visitor.query;
             _query = _query.Replace("(", "").Replace(")", "");
@@ -182,7 +189,8 @@ namespace SNow.Core
             return this;
         }
 
-        public ITableApi<TModel> SetHeaders(List<KeyValuePair<string, string>> entries)
+        ///<inheritdoc/>
+        public ITable<T> SetHeaders(List<KeyValuePair<string, string>> entries)
         {
             foreach (var entry in entries)
             {
@@ -191,7 +199,8 @@ namespace SNow.Core
             return this;
         }
 
-        public ITableApi<TModel> WithQuery(Expression<Func<TModel, string>> expression)
+        ///<inheritdoc/>
+        public ITable<T> WithQuery(Expression<Func<T, string>> expression)
         {
             //TODO: Should we be using expression tree to extract the data?
             var arguments = (expression.Body as MethodCallExpression)?.Arguments;
@@ -231,14 +240,14 @@ namespace SNow.Core
             return this;
         }
 
-        public async Task<List<TModel>> ToListAsync(int? page)
+        public async Task<List<T>> ToListAsync(int? page)
         {
             if (SN.Token == null && SN.BasicAuthParams == null)
                 await SN.AuthenticateAsync();
             if (_httpClient.DefaultRequestHeaders.Authorization == null)
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", SN.Token);
             var url = page == null ? RequestGetUrl : RequestUrl + $"&sysparm_offset={page * _pageSize}";
-            var result = await _httpClient.GetActionResultAsync<List<TModel>>(url, SN.AuthenticateAsync, _logger);
+            var result = await _httpClient.GetActionResultAsync<List<T>>(url, SN.AuthenticateAsync, _logger);
             _currentPage++;
 
             if (result?.Count == 0)
@@ -247,31 +256,31 @@ namespace SNow.Core
             return result;
         }
 
-        async Task<TModel> ITableApi<TModel>.GetByIdAsync(Guid id)
+        async Task<T> ITable<T>.GetByIdAsync(Guid id)
         {
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}";
-            return await _httpClient.GetActionResultAsync<TModel>(url, SN.AuthenticateAsync, _logger);
+            return await _httpClient.GetActionResultAsync<T>(url, SN.AuthenticateAsync, _logger);
         }
 
-        async Task<bool> ITableApi<TModel>.Delete(Guid id)
+        async Task<bool> ITable<T>.Delete(Guid id)
         {
             return await Delete(id);
         }
 
-        async Task<TModel> ITableApi<TModel>.Create(object model)
+        async Task<T> ITable<T>.Create(object model)
         {
             var url = $"{SN.BaseAddress}/table/{_tableName}";
 
-            var result = await _httpClient.PostActionResultAsync<TModel>(url, model, SN.AuthenticateAsync);
+            var result = await _httpClient.PostActionResultAsync<T>(url, model, SN.AuthenticateAsync);
             return result;
         }
 
-        async Task<TModel> ITableApi<TModel>.Update(Guid? id, object data, bool excludeReferenceLinks = true)
+        async Task<T> ITable<T>.Update(Guid? id, object data, bool excludeReferenceLinks = true)
         {
             var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}{excludeLinks}";
 
-            var result = await _httpClient.PutActionResultAsync<TModel>(url, data, SN.AuthenticateAsync);
+            var result = await _httpClient.PutActionResultAsync<T>(url, data, SN.AuthenticateAsync);
 
             return result;
         }
@@ -305,6 +314,12 @@ namespace SNow.Core
         protected List<string> _select;
         protected int _currentPage = 0;
 
+        /// <summary>
+        /// Used by typed and untyped Table
+        /// </summary>
+        /// <param name="serviceNow"></param>
+        /// <param name="tableName"></param>
+        /// <param name="logger"></param>
         public TableBase(IServiceNow serviceNow, string tableName, ILogger logger)
         {
             if (logger != null)

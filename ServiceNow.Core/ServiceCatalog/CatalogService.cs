@@ -27,14 +27,14 @@ namespace SNow.Core.ServiceCatalog
         }
     }
 
-    public class CatalogService<TModel> : CatalogServiceBase, ICatalogService<TModel> where TModel : ServiceNowBaseModel
+    public class CatalogService<T> : CatalogServiceBase, ICatalogService<T> where T : ServiceNowBaseModel
     {
         public CatalogService(IServiceNow serviceNow, Guid catalogItem) : base (serviceNow, catalogItem)
         {
 
         }
 
-        async Task<TModel> ICatalogService<TModel>.Request(object variables)
+        async Task<T> ICatalogService<T>.Request(object variables)
         {
             var url = $"{_baseAddress}/sn_sc/servicecatalog/items/{_catalogueItemId}/order_now";
 
@@ -43,7 +43,7 @@ namespace SNow.Core.ServiceCatalog
                 sysparm_quantity = "1"
             };
 
-            var result = await _httpClient.PostActionResultAsync<TModel>(url, payload, SN.AuthenticateAsync);
+            var result = await _httpClient.PostActionResultAsync<T>(url, payload, SN.AuthenticateAsync);
             return result;
         }
     }

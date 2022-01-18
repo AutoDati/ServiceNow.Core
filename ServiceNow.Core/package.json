@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs:dev": "vitepress dev docs",
+    "predocs:dev": "cpx \"Docs/backup/*.md\" \"Docs/\" && node replace.js",
+    "predocs:build": "cpx \"Docs/backup/*.md\" \"Docs/\" && node replace.js",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs"
   },
@@ -22,6 +24,11 @@
   },
   "homepage": "https://github.com/emersonbottero/ServiceNow.Core#readme",
   "devDependencies": {
+    "cpx": "^1.5.0",
+    "replace-in-files": "^3.0.0",
     "vitepress": "^0.21.4"
+  },
+  "dependencies": {
+    "yarn": "^1.22.17"
   }
 }

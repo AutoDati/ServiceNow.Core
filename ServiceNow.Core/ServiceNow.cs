@@ -1,19 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using SNow.Core.Authentication;
-using SNow.Core.SetImport;
 using SNow.Core.Models;
 using SNow.Core.ServiceCatalog;
+using SNow.Core.SetImport;
 using SNow.Core.Utils;
 using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using System.Text;
 
 namespace SNow.Core
 {
@@ -81,17 +77,17 @@ namespace SNow.Core
             }
         }
 
-        public ITableApi<TModel> UsingTable<TModel>(string tableName, ILogger logger = null) where TModel : ServiceNowBaseModel
+        public ITable<T> UsingTable<T>(string tableName, ILogger logger = null) where T : ServiceNowBaseModel
         {
-            return new Table<TModel>(this,tableName, logger) {};
+            return new Table<T>(this,tableName, logger) {};
         }
 
-        public ITableApi<TModel> UsingTable<TModel>(ILogger logger = null) where TModel : ServiceNowBaseModel
+        public ITable<T> UsingTable<T>(ILogger logger = null) where T : ServiceNowBaseModel
         {
-            return new Table<TModel>(this, logger) { };
+            return new Table<T>(this, logger) { };
         }
 
-        public ITableAPI UsingTable(string tableName, ILogger logger = null)
+        public ITable UsingTable(string tableName, ILogger logger = null)
         {
             return new Table(this,tableName, logger) {};
         }

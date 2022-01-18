@@ -1,9 +1,11 @@
-﻿using SNow.Core.Models;
+﻿using SNow.Core;
+using SNow.Core.Models;
 using System;
 using System.Text.Json.Serialization;
 
 namespace Models
 {
+    [SnowTable("sys_user")]
     public class User : ServiceNowBaseModel
     {
         public string Country { get; set; }

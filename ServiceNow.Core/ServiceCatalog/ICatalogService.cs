@@ -14,8 +14,8 @@ namespace SNow.Core.ServiceCatalog
         IServiceNow SN { get; set; }
     }
 
-    public interface ICatalogService<TModel> where TModel : ServiceNowBaseModel
+    public interface ICatalogService<T> where T : ServiceNowBaseModel
     {
-        Task<TModel> Request(object data);
+        Task<T> Request(object data);
     }
 }

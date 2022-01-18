@@ -209,6 +209,9 @@ namespace SNow.Core.Utils
             }
         }
 
+        /// <summary>
+        /// Convert string dates format between DateTime and ServiceNow
+        /// </summary>
         public class NullableDateOption : JsonConverter<DateTime?>
         {
             public override DateTime? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -227,6 +230,10 @@ namespace SNow.Core.Utils
             }
         }
 
+
+        /// <summary>
+        /// Convert string dates format between DateTime and ServiceNow
+        /// </summary>
         public class DateOption : JsonConverter<DateTime>
         {
             public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
