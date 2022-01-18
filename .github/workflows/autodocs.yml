@@ -25,12 +25,13 @@ jobs:
     - uses: actions/checkout@v2
     - run: yarn --cwd ./ServiceNoe.Core
     - run: yarn docs:build --if-present
-    
-    - name: Publish generated content to GitHub Pages
+    - run: ls -la
+    - name: Publish generated content to GitHub Pages    
       uses: tsunematsu21/actions-publish-gh-pages@v1.0.2
       with:
           dir: Docs/.vitepress/dist
           branch: gh-pages
           token: ${{ secrets.ACCESS_TOKEN }}
+    - run: ls -la
     #- run: ./deploy.sh
     #  shell: bash
