@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
+    - run: yarn --cwd ./ServiceNoe.Core
+    - run: yarn dev:build --if-present
     - run: ./ServiceNow.Core/deploy.sh
       shell: bash
