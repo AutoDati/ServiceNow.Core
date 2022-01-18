@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./
+        working-directory: ./ServiceNow.Core
     strategy:
       matrix:
         node-version: [16.x]
