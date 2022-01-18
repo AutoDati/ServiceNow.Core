@@ -24,6 +24,7 @@ jobs:
     - run: cd ServiceNow.Core
     - run: ls -la
     - name: Use Node.js ${{ matrix.node-version }}
+      working-directory: ./ServiceNow.Core
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
