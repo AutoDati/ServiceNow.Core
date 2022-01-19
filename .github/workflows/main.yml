@@ -17,6 +17,7 @@ jobs:
           cd ServiceNow.Core
           npm i
           npm run docs:build
+          tree
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
