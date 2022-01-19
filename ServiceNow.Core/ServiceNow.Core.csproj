@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup Label="Docs">
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<DefaultDocumentationFolder>$(MSBuildProjectDirectory)/Docs</DefaultDocumentationFolder>
+		<DefaultDocumentationFolder>$(MSBuildProjectDirectory)/docs</DefaultDocumentationFolder>
 		<DefaultDocumentationGeneratedAccessModifiers>Public</DefaultDocumentationGeneratedAccessModifiers>
 		<DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
 		<DefaultDocumentationIgnoreLineBreak>true</DefaultDocumentationIgnoreLineBreak>
@@ -74,6 +74,6 @@ This Package also handle authentication</Description>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Docs\.vitepress\config.js" />
+	  <None Include="docs\.vitepress\config.js" />
 	</ItemGroup>
 </Project>

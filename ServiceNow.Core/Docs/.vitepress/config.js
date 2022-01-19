@@ -1,11 +1,11 @@
 ﻿module.exports = {
-    title: 'ServiceNow.Core',
-    description: 'Your easy to use REST API integration library',
-    base: '/ServiceNow.Core/',
-    
+  title: 'ServiceNow.Core',
+  description: 'Your easy to use REST API integration library',
+  base: '/ServiceNow.Core/',
+
   themeConfig: {
     repo: 'emersonbottero/ServiceNow.Core',
-    docsDir: 'Docs',
+    docsDir: 'docs',
     docsBranch: 'main',
     //editLinks: true,
     // editLinkText: 'Edit this page on GitHub',
@@ -60,9 +60,9 @@ function getConfigSidebar() {
     {
       text: 'Configurations',
       children: [
-          { text: 'Authentication', link: '/config/Authentication' },
-          { text: 'Serializers', link: '/config/Serializers' }
-        ]
+        { text: 'Authentication', link: '/config/Authentication' },
+        { text: 'Serializers', link: '/config/Serializers' }
+      ]
     },
   ]
 }
