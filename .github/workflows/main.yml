@@ -31,6 +31,10 @@ jobs:
           npm run docs:build
           cd ..
           ls -la
+          echo 'from Root'
+          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/Docs/.vitepress
+          echo 'to dist'
+          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/Docs/.vitepress/dist
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
