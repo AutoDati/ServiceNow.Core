@@ -9,6 +9,7 @@
     "predocs:dev": "cpx \"Docs/backup/*.md\" \"Docs/\" && node replace.js",
     "predocs:build": "cpx \"Docs/backup/*.md\" \"Docs/\" && node replace.js",
     "docs:build": "vitepress build docs",
+    "posdocs:build": "tree",
     "docs:serve": "vitepress serve docs"
   },
   "repository": "git+https://github.com/emersonbottero/ServiceNow.Core.git",
