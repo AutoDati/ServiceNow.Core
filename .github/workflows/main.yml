@@ -34,8 +34,7 @@ jobs:
           echo 'from Root'
           ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/Docs/.vitepress
           echo 'to dist'
-          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/Docs/.vitepress/dist
-
+          ls -la /home/runner/work/
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
