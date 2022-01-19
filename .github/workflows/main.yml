@@ -33,7 +33,7 @@ jobs:
           cd ..
           ls -la
           echo 'from Root'
-          ls -la /home/runner/work/
+          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core
           ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/Docs/.vitepress
           echo 'to dist'          
       - name: Deploy 🚀
