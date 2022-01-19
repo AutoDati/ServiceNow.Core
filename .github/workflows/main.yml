@@ -1,9 +1,10 @@
 name: Build and Deploy
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  workflow_dispatch
+  #push:
+  #  branches: [ master ]
+  #pull_request:
+  #  branches: [ master ]  
 jobs:
   build-and-deploy:
     #concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
