@@ -5,7 +5,7 @@
     
   themeConfig: {
     repo: 'emersonbottero/ServiceNow.Core',
-    docsDir: 'docs',
+    docsDir: 'Docs',
     docsBranch: 'main',
     //editLinks: true,
     // editLinkText: 'Edit this page on GitHub',
