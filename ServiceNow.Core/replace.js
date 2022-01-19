@@ -4,14 +4,14 @@
 
 const options = {
 
-    files: "Docs/**/*.md",
+    files: "docs/**/*.md",
 
     from: /\[.*?\]/gi, // string or regex
 
-    to: function(match) { 
+    to: function (match) {
 
-        return match.replace(/<\/?[^>]*?>/gi,' ');
-    
+        return match.replace(/<\/?[^>]*?>/gi, ' ');
+
     }
 
 };
@@ -19,6 +19,7 @@ const options = {
 
 
 async function main() {
+    console.warn("Modifieinf files!!!");
 
     try {
 
