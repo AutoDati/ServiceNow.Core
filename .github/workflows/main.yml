@@ -30,13 +30,7 @@ jobs:
           cd ServiceNow.Core
           npm i
           npm run docs:build
-          cd ..
-          ls -la
-          echo 'docs/v'
-          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/ServiceNow.Core/docs/.vitepress
-          echo 'Docs/v'
-          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/ServiceNow.Core/Docs/.vitepress
-          echo 'to dist'          
+          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/ServiceNow.Core/docs/.vitepress/dist          
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
