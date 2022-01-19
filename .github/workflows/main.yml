@@ -32,8 +32,10 @@ jobs:
           npm run docs:build
           cd ..
           ls -la
-          echo 'from Root'
-          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/ServiceNow.Core
+          echo 'Docs'
+          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/ServiceNow.Core/Docs
+          echo 'docs'
+          ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/ServiceNow.Core/docs
           ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/Docs/.vitepress
           echo 'to dist'          
       - name: Deploy 🚀
