@@ -1,1 +1,0 @@
-import{_ as t,c as e,o,a}from"./app.149613ba.js";const C='{"title":"ServiceNow.Core","description":"","frontmatter":{},"headers":[],"relativePath":"baseindex.md","lastUpdated":1642480795535}',l={},r=a("",2),i=[r];function s(d,n,_,h,c,S){return o(),e("div",null,i)}var x=t(l,[["render",s]]);export{C as __pageData,x as default};

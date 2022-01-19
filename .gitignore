@@ -140,5 +140,5 @@ _NCrunch*
 node_modules
 ServiceNow.Core/Docs/*.md
 ServiceNow.Core/Docs/**/*.html
-#!ServiceNow.Core/Docs/**/
-ServiceNow.Core/Docs/.vitepress/dist
+!ServiceNow.Core/Docs/**/
+ServiceNow.Core/Docs/**/dist
