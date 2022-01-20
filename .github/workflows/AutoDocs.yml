@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   job_1:
-    name: Build DOTNET
+    name: Generate md files from code
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -39,7 +39,7 @@ jobs:
           path: ServiceNow.Core
           
   job_2:
-    name: Build NODE
+    name: Build documentation page
     needs: job_1
     runs-on: ubuntu-latest
     steps:
@@ -56,17 +56,17 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: documented
-          path: ./
+          path: ./docs
           
-  #job_3:
-  #  name: Display results
-  #  needs: job_2
-  #  runs-on: ubuntu-lastest
-  #  steps:
-  #    - name: Download builded net project
-  #      uses: actions/download-artifact@v2
-  #      with:
-  #        name: documented
-  #    - shell: bash
-  #      run: |
-  #        ls -la
+  job_3:
+    name: Display results
+    needs: job_2
+    runs-on: ubuntu-lastest
+    steps:
+      - name: Download builded net project
+        uses: actions/download-artifact@v2
+        with:
+          name: documented
+      - shell: bash
+        run: |
+          ls -la
