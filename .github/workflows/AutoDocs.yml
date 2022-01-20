@@ -62,15 +62,15 @@ jobs:
           name: documented
           path: ./
           
-  job_3:
-    name: Display results
-    needs: job_2
-    runs-on: ubuntu-lastest
-    steps:
-      - name: Download builded net project
-        uses: actions/download-artifact@v2
-        with:
-          name: documented
-      - shell: bash
-        run: |
-          ls -la
+  #job_3:
+  #  name: Display results
+  #  needs: job_2
+  #  runs-on: ubuntu-lastest
+  #  steps:
+  #    - name: Download builded net project
+  #      uses: actions/download-artifact@v2
+  #      with:
+  #        name: documented
+  #    - shell: bash
+  #      run: |
+  #        ls -la
