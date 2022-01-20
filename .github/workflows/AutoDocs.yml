@@ -23,19 +23,15 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout 🛎️
-      - uses: actions/checkout@v2
-      
+        uses: actions/checkout@v2      
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }} 🤓
-      - uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@v1.7.2
         with:
-          dotnet-version: '5.0.x'
-      
+          dotnet-version: '5.0.x'      
       - name: Install dependencies 💤
         run: dotnet restore
-
       - name: Build .NET
-        run: dotnet build ServiceNow.Core --configuration Release --no-restore
-        
+        run: dotnet build ServiceNow.Core --configuration Release --no-restore        
       - name: Upload docs
         uses: actions/upload-artifact@v2
         with:
