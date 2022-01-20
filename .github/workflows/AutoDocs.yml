@@ -32,7 +32,7 @@ jobs:
         run: dotnet restore
       - name: Build .NET
         run: dotnet build ServiceNow.Core --configuration Release --no-restore        
-      - name: Upload docs
+      - name: Upload docs 📦
         uses: actions/upload-artifact@v2
         with:
           name: documented
@@ -43,7 +43,7 @@ jobs:
     needs: job_1
     runs-on: ubuntu-latest
     steps:
-      - name: Download builded net project
+      - name: Download builded net project 📦
         uses: actions/download-artifact@v2
         with:
           name: documented
@@ -52,7 +52,7 @@ jobs:
           npm install
           npm run docs:build
           ls -la
-      - name: Upload math result for job 2
+      - name: Upload doc's 📓
         uses: actions/upload-artifact@v2
         with:
           name: documented
@@ -63,10 +63,11 @@ jobs:
     needs: job_2
     runs-on: ubuntu-lastest
     steps:
-      - name: Download builded net project
+      - name: Download builded docs 📦
         uses: actions/download-artifact@v2
         with:
           name: documented
       - shell: bash
         run: |
-          ls -la
+          echo 'Running 3 job'
+          ls -la    
