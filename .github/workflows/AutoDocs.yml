@@ -61,7 +61,7 @@ jobs:
   job_3:
     name: Display results
     needs: job_2
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-16.04
     steps:
       - name: Download builded docs 📦
         uses: actions/download-artifact@v2
