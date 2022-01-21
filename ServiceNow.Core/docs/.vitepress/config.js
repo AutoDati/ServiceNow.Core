@@ -12,14 +12,14 @@
     // lastUpdated: 'Last Updated',
 
     nav: [
-      // { text: 'Guide', link: '/', activeMatch: '^/guide/' },
-      // {text: 'Home', link: '/index.html', activeMatch: '/index.html'},
+      { text: 'Guide', link: '/guide/getting-started', activeMatch: '^/guide/' },
+      // { text: 'Home', link: '/index.html', activeMatch: '/index.html' },
       {
         text: 'Config Reference',
         link: '/config/Authentication',
         activeMatch: '^/config/'
       },
-      { text: 'Auto Generated', link: '/baseindex', activeMatch: '^/$' },
+      { text: 'Auto Generated', link: '/auto/', activeMatch: '^/auto/' },
       {
         text: 'Release Notes',
         link: 'https://github.com/emersonbottero/ServiceNow.Core/releases'

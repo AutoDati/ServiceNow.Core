@@ -138,7 +138,7 @@ _NCrunch*
 
 # Automatic documentation
 node_modules
+ServiceNow.Core/docs/auto/*.md
 ServiceNow.Core/docs/*.md
-ServiceNow.Core/docs/**/*.html
-!ServiceNow.Core/docs/**/
-ServiceNow.Core/docs/**/dist
+!ServiceNow.Core/docs/README.md
+ServiceNow.Core/docs/.vitepress/dist

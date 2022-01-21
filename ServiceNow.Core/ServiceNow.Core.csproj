@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup Label="Docs">
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<DefaultDocumentationFolder>$(MSBuildProjectDirectory)/docs</DefaultDocumentationFolder>
+		<DefaultDocumentationFolder>$(MSBuildProjectDirectory)/docs/auto</DefaultDocumentationFolder>
 		<DefaultDocumentationGeneratedAccessModifiers>Public</DefaultDocumentationGeneratedAccessModifiers>
 		<DefaultDocumentationIncludeUndocumentedItems>true</DefaultDocumentationIncludeUndocumentedItems>
 		<DefaultDocumentationIgnoreLineBreak>true</DefaultDocumentationIgnoreLineBreak>
 		<DefaultDocumentationFileNameMode>Name</DefaultDocumentationFileNameMode>
-		<DefaultDocumentationAssemblyPageName>baseindex</DefaultDocumentationAssemblyPageName>
 		<!--We used TS inside Vitepress only-->
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 	</PropertyGroup>
@@ -705,5 +704,9 @@ This Package also handle authentication</Description>
 	  <None Include="docs\.vitepress\dist\assets\Table_Update%28Guid_object_bool%29.md.5af9b594.lean.js" />
 	  <None Include="docs\.vitepress\dist\assets\Table_WithQuery%28string%29.md.ca7e8303.js" />
 	  <None Include="docs\.vitepress\dist\assets\Table_WithQuery%28string%29.md.ca7e8303.lean.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="docs\docs\" />
 	</ItemGroup>
 </Project>
