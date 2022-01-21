@@ -42,5 +42,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: ServiceNow.Doc/docs/.vitepress/dist # The folder the action should deploy.
+          folder: docs/.vitepress/dist # The folder the action should deploy.
   
