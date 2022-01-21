@@ -6,12 +6,13 @@ on:
   #pull_request:
   #  branches: [ master ]  
 jobs:
-  build-and-deploy:
+  build-and-deploy-dotnet:
     #concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
     runs-on: ubuntu-latest
     strategy:
       matrix:
         dotnet-version: ['5.0.x']
+        node-version: [16]
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -28,7 +29,7 @@ jobs:
       - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         run: |
           cd ServiceNow.Core
-          npm i
+          npm install
           npm run docs:build
           ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/ServiceNow.Core/docs/.vitepress/dist          
       - name: Deploy 🚀
