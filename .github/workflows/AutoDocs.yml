@@ -38,6 +38,7 @@ jobs:
           npm install
           npm run docs:build
           cd ..
+          tree /home/runner/work/ServiceNow.Core/
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
