@@ -52,23 +52,14 @@ jobs:
           npm install
           npm run docs:build
           ls -la
-      - name: Upload doc's 📓
-        uses: actions/upload-artifact@v2
-        with:
-          name: documented
-          path: ./docs
-          
-  job_3:
-    name: Display results
-    needs: job_2
-    runs-on: ubuntu-16.04
-    steps:
-      - name: Download builded docs 📦
-        uses: actions/download-artifact@v2
-        with:
-          name: documented
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
           branch: gh-pages # The branch the action should deploy to.
           folder: documented # The folder the action should deploy.
+
+      #- name: Upload doc's 📓
+      #  uses: actions/upload-artifact@v2
+      #  with:
+      #    name: documented
+      #    path: ./docs       
