@@ -2,7 +2,7 @@
 
 Easy to connect, and interact with Service Now API
 
-⚗ This library is in beta state, feel free to test and contribute
+📕 See the [Full Documentation](https://emersonbottero.github.io/ServiceNow.Core/)
 
 ## Description
 

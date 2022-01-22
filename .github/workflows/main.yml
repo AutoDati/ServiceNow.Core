@@ -27,13 +27,13 @@ jobs:
       - name: Build .NET
         run: dotnet build ServiceNow.Core --configuration Release --no-restore
       #NODEJS
-      - name: Install and build documentation
+      - name: Install and build documentation 🚧
         run: |
           cd ServiceNow.Core
           npm install
           npm run docs:build
           ls -la /home/runner/work/ServiceNow.Core/ServiceNow.Core/ServiceNow.Core/docs/.vitepress/dist          
-      - name: Deploy Documentation
+      - name: Deploy Documentation 📕
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
           branch: gh-pages # The branch the action should deploy to.
