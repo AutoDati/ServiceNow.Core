@@ -1,4 +1,5 @@
-using Shouldly;
+//using Shouldly;
+using FluentAssertions;
 using System;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace Snow.Test
             UserTable.SN.Token = "blablabla";
 
             //Assert
-            UserTable.RequestUrl.ShouldContain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}");
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}");
         }
 
         [Fact]
@@ -28,7 +29,7 @@ namespace Snow.Test
             UserTable.Limit(10);
 
             //Assert
-            UserTable.RequestUrl.ShouldContain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10");
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10");
         }
 
         [Fact]
@@ -42,7 +43,7 @@ namespace Snow.Test
                 .OrderByDesc(x => x.Name);
 
             //Assert
-            UserTable.RequestUrl.ShouldContain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10000&sysparm_query=ORDERBYage^ORDERBYDESCstrange_name");
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10000&sysparm_query=ORDERBYage^ORDERBYDESCstrange_name");
         }
 
         [Fact]
@@ -55,7 +56,7 @@ namespace Snow.Test
                 .Select(x => x.Age, x => x.Name);
 
             //Assert
-            UserTable.RequestUrl.ShouldContain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields=age,strange_name");
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields=age,strange_name");
         }
 
         [Fact]
@@ -69,7 +70,7 @@ namespace Snow.Test
                             and {x.Age} != 10");
 
             //Assert
-            UserTable.RequestUrl.ShouldContain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10000&sysparm_query=strange_nameLIKEBranco^age!=10");
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10000&sysparm_query=strange_nameLIKEBranco^age!=10");
         }
 
         [Fact]
@@ -82,7 +83,7 @@ namespace Snow.Test
                 .Where(x => x.Name is DumpServer && x.Name.Contains("Branco") && x.Age != 10);
 
             //Assert
-            UserTable.RequestUrl.ShouldContain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10000&sysparm_query=strange_name INSTANCEOF snow_table_name ^ strange_nameLIKEBranco ^ age!=10");
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10000&sysparm_query=strange_name INSTANCEOF snow_table_name ^ strange_nameLIKEBranco ^ age!=10");
         }
     }
 }

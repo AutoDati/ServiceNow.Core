@@ -4,7 +4,7 @@ There are several options to authenticate in service Now.
 
 Usually you use this on developing in a dev instance of serviceNow
 
-``` json
+```json
 {
   "BaseAddress": "https://dev77132.service-now.com/api",
   "UserName": "admin",
@@ -13,16 +13,16 @@ Usually you use this on developing in a dev instance of serviceNow
 ```
 
 ## AzureAd Authentication
-  
-  ::: tip
-  The library check if scope has and .default or not to define how it will get access tokens <br/>
-  You can use Credentials or Client Secrets for daemon applications
-  :::
+
+::: tip
+The library check if scope has and .default or not to define how it will get access tokens <br/>
+You can use Credentials or Client Secrets for daemon applications
+:::
 
 This uses Azure AD to handle authentication mostly used inside companies.
 
- ``` json
- {
+```json
+{
   "Instance": "https://login.microsoftonline.com/",
   "TenantId": "Your company Azure Tenant ID",
   "ClientId": "You CLient Id",
@@ -32,8 +32,9 @@ This uses Azure AD to handle authentication mostly used inside companies.
 }
 ```
 
-Those are parameters in the ServiceNow constructor 
-``` csharp
+Those are parameters in the ServiceNow constructor
+
+```csharp
 var config = BasicAuthenticationConfig.ReadFromJsonFile("appsettings.json");
 var ServiceNow = new ServiceNow(config);
 ```

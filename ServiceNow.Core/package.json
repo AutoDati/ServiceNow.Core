@@ -29,10 +29,10 @@
     "replace-in-files": "^3.0.0",
     "rimraf": "^3.0.2",
     "shx": "^0.3.4",
-    "vitepress": "^0.21.4",
-    "vitepress-dark-theme": "^0.1.1"
+    "vitepress": "^0.21.4"
   },
   "dependencies": {
+    "vitepress-dark-theme": "^0.1.4",
     "yarn": "^1.22.17"
   }
 }
