@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace SNow.Core
 {
+    /// <summary>
+    /// Used when the properties from an table only has meaning in an specif subset of data <br/>
+    /// Like in the relations table.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class SnowFilterAttribute : Attribute
     {

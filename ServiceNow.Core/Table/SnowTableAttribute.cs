@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SNow.Core
 {
+    /// <summary>
+    /// Set the table name where those class properties come from
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class SnowTableAttribute : Attribute
     {
