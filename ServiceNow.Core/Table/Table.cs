@@ -118,6 +118,8 @@ namespace SNow.Core
         {
             _select = ClassReflections.GetPropertieNamesInJsonFormat<T>();
             _props = ClassReflections.GetJsonPropertyNameData<T>();
+
+            #region SNowTable
             var attrs = typeof(T).GetCustomAttributes(typeof(SnowTableAttribute), true);
 
             if (attrs.Length < 1)
@@ -134,6 +136,21 @@ namespace SNow.Core
 
                 _tableName = tableNameAttr.Name;
             }
+            #endregion
+
+            #region Filter
+            attrs = typeof(T).GetCustomAttributes(typeof(SnowFilterAttribute), true);
+
+            if (attrs.Length < 1)
+                throw new ArgumentNullException("SnowTable", "The Class is missing SnowTable Attribute");
+
+            foreach (object attr in attrs)
+            {
+                var snowFilterAttr = attr as SnowFilterAttribute;             
+                _query = snowFilterAttr.Query;
+            }
+            #endregion
+
         }
 
         ///<inheritdoc/>
