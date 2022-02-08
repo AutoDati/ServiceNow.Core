@@ -106,6 +106,7 @@ namespace SNow.Core
     {
         private List<(string PropName, string AttName)> _props = new List<(string PropName, string AttName)>();
         public string _where;
+        private bool _withFilterAttribute = false;
 
         public Table(IServiceNow serviceNow, string tableName, ILogger logger = null) : base(serviceNow, tableName, logger)
         {
@@ -141,8 +142,8 @@ namespace SNow.Core
             #region Filter
             attrs = typeof(T).GetCustomAttributes(typeof(SnowFilterAttribute), true);
 
-            if (attrs.Length < 1)
-                throw new ArgumentNullException("SnowTable", "The Class is missing SnowTable Attribute");
+            if (attrs.Length > 0)
+                _withFilterAttribute = true;
 
             foreach (object attr in attrs)
             {
@@ -197,6 +198,9 @@ namespace SNow.Core
         ///<inheritdoc/>
         public ITable<T> Where(Expression<Func<T, bool>> expr)
         {
+            if (_withFilterAttribute)
+                throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
+
             var visitor = new PrintingVisitor<T>(expr);
             visitor.Visit(expr);
             _query = visitor.query;
@@ -219,6 +223,9 @@ namespace SNow.Core
         ///<inheritdoc/>
         public ITable<T> WithQuery(Expression<Func<T, string>> expression)
         {
+            if (_withFilterAttribute)
+                throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
+
             //TODO: Should we be using expression tree to extract the data?
             var arguments = (expression.Body as MethodCallExpression)?.Arguments;
             var query = arguments?[0].ToString().Replace("\"", "") ?? (expression.Body as ConstantExpression).Value.ToString();
