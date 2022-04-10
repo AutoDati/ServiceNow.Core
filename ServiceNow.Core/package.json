@@ -32,7 +32,7 @@
     "vitepress": "^0.21.4"
   },
   "dependencies": {
-    "vitepress-dark-theme": "^0.1.4",
+    "vitepress-dark-theme": "^0.1.5",
     "yarn": "^1.22.17"
   }
 }

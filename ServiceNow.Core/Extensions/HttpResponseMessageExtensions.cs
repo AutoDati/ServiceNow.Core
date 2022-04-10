@@ -34,6 +34,9 @@ namespace SNow.Core.Extensions
 
             var plainResult = await response.Content.ReadAsStringAsync();
             //Response from ServiceNow contain result when more them one item is returned
+            if (!plainResult.IsJsonValid())
+                Console.WriteLine("this should never log because the above Method trows exception if string is not a json");
+
             var hasResult = plainResult.Length >=10 && plainResult.Substring(0, 10).Contains("result");
 
             ServiceNowResult plainResultList = null;
