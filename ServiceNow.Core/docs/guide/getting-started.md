@@ -4,19 +4,22 @@
 - See [Configurations](/config/Authentication) to setup Authentication as well Custom Serializers
 - Create an instance of ServiceNow.
 
-``` csharp
+```csharp
 var config = BasicAuthenticationConfig.ReadFromJsonFile("appsettings.json");
 var ServiceNow = new ServiceNow(config);
 ```
 
 - It is possible to use Injection as well
-``` csharp
+
+```csharp
 services.AddSingleton<IServiceNow>(new ServiceNow(config));
 ```
+
 ## Not typed
 
 - Create a Table Instance (Not Typed) and set request parameters
-``` csharp
+
+```csharp
 var usersTableNotTyped = ServiceNow
     .UsingTable("sys_user")
     .Limit(2)
@@ -36,15 +39,21 @@ while (usersNotTyped.Count > 0)
 ## Typed
 
 - Create a Table Instance (Typed) and set request parameters
-To use types version it is needed an class inherited from ServiceNowBaseModel
+  To use types version it is needed an class inherited from ServiceNowBaseModel
 
   ::: tip
-  Use Attributes to map table names (SnowTable) and properties (JsonPropertyName) used in ServiceNow.
+  Use Attributes to map table names (SnowTable) and properties (JsonPropertyName) used in ServiceNow. <br/>
+  You also can set a Filter in the class, In this case there no need to use withQuery or Where methods. Very useful when reading the relational table <br/>
+  You can just copy and past the query from the table view in ServiceNow!
   :::
 
-Creating an table class model 
-``` csharp
+Creating an table class model
+
+```csharp
+    //Remove the need to use .WithTable
     [SnowTable("sys_user")]
+    //Remove the need to use .Where or .WithQuery and helps to keep context inside the class
+    [SnowFilter("nameLikeBottero")]
     public class User : ServiceNowBaseModel
     {
         public string Country { get; set; }
@@ -65,7 +74,8 @@ Creating an table class model
 ```
 
 Creating an table instance
-``` csharp
+
+```csharp
 var usersTable = ServiceNow
     .UsingTable<User>("sys_user")
     .Limit(2)
@@ -74,7 +84,7 @@ var usersTable = ServiceNow
 
 # More Examples
 
-``` csharp
+```csharp
 //Creating a table instance
 var incidentsTableNotTyped = ServiceNow
     .UsingTable("incident")
@@ -100,5 +110,3 @@ incidentsNotTyped.ForEach(async incident =>
         Console.WriteLine("Incident NOT Changed");
 });
 ```
-
-
