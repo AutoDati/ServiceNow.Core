@@ -81,7 +81,7 @@ namespace SNow.Core.Authentication
         {
             if (string.IsNullOrWhiteSpace(certificateName))
             {
-                throw new ArgumentException("certificateName should not be empty. Please set the CertificateName setting in the appsettings.json", "certificateName");
+                throw new ArgumentException("certificateName should not be empty. Please set the CertificateName setting in the appsettings.json", certificateName);
             }
             CertificateDescription certificateDescription = CertificateDescription.FromStoreWithDistinguishedName(certificateName);
             DefaultCertificateLoader defaultCertificateLoader = new DefaultCertificateLoader();
