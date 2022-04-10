@@ -13,14 +13,22 @@ namespace SNow.Core
     /// </summary>
     public interface ITable
     {
+        /// <summary>
+        /// 
+        /// </summary>
         string RequestUrl { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entries"></param>
+        /// <returns></returns>
         ITable SetHeaders(List<KeyValuePair<string, string>> entries);
         /// <summary>
-        /// The query must have only those operators
-        /// and, or, like, =, !=, startsWith, endsWith
+        /// The query must have only those operators <br/>
+        /// and, or, like, =, !=, startsWith, endsWith <br/>
         /// see <see href="https://docs.servicenow.com/bundle/rome-application-development/page/integrate/inbound-rest/concept/c_RESTAPI.html">SN Rest Operators</see>
         /// </summary>
-        /// <param name="expression">String that has access to the table model
+        /// <param name="query">String that has access to the table model <br/>
         /// ex.: x => $"Name like Something and Age = 10"</param>
         ITable WithQuery(string query);
         /// <summary>
@@ -29,29 +37,73 @@ namespace SNow.Core
         /// <param name="limit"></param>
         /// <returns></returns>
         ITable Limit(int limit);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderBy"></param>
+        /// <returns></returns>
         ITable OrderBy(string orderBy);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderByDesc"></param>
+        /// <returns></returns>
         ITable OrderByDesc(string orderByDesc);
         /// <summary>
-        /// List of properties to return,
+        /// List of properties to return, <br/>
         /// impacts the size of the response
         /// </summary>
-        /// <param name="expressions"></param>
+        /// <param name="fields"></param>
         ITable Select(string[] fields);
         /// <summary>
-        /// Makes the actual HTTP Request
+        /// Makes the actual HTTP request
         /// </summary>
         /// <param name="pageNumber"></param>
         /// <returns>An generic json element of type Array</returns>
         Task<List<JsonElement>> ToListAsync(int? pageNumber = null);
+
+        /// <summary>
+        /// Makes HTTP requests to get all data (from all pages)
+        /// </summary>
+        /// <returns></returns>
+        Task<List<JsonElement>> AllToListAsync();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         Task<JsonElement> GetByIdAsync(Guid id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         Task<bool> Delete(Guid id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         Task<JsonElement> Create(object model);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <param name="excludeLinks"></param>
+        /// <returns></returns>
         Task<JsonElement> Update(Guid id, object data, bool excludeLinks = true);
 
     }
 
+    /// <summary>
+    /// Handle ServiceNow tables API
+    /// </summary>
     public interface ITable<T> where T : ServiceNowBaseModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         string RequestUrl { get; }
 
         /// <summary>
@@ -62,6 +114,11 @@ namespace SNow.Core
         /// <returns></returns>
         ITable<T> Where(Expression<Func<T, bool>> expr);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entries"></param>
+        /// <returns></returns>
         ITable<T> SetHeaders(List<KeyValuePair<string, string>> entries);
         /// <summary>
         /// The query must have only those operators
@@ -78,7 +135,17 @@ namespace SNow.Core
         /// <param name="limit"></param>
         /// <returns></returns>
         ITable<T> Limit(int limit);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         ITable<T> OrderBy(Expression<Func<T, object>> expression);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         ITable<T> OrderByDesc(Expression<Func<T, object>> expression);
         /// <summary>
         /// List of properties to return,
@@ -92,9 +159,36 @@ namespace SNow.Core
         /// <param name="pageNumber"></param>
         /// <returns></returns>
         Task<List<T>> ToListAsync(int? pageNumber = null);
+        /// <summary>
+        /// Makes HTTP requests to get all data (from all pages)
+        /// </summary>
+        /// <returns></returns>
+        Task<List<T>> AllToListAsync();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         Task<T> GetByIdAsync(Guid id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         Task<bool> Delete(Guid id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         Task<T> Create(object model);
-        Task<T> Update(Guid? id, object data, bool excludeLinks);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <param name="excludeLinks"></param>
+        /// <returns></returns>
+        Task<T> Update(Guid? id, object data, bool excludeLinks = true);
     }
 }

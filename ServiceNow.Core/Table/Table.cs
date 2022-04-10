@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("ServiceNow.Core.Test")]
 namespace SNow.Core
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Table : TableBase, ITable
     {
         ///<inheritdoc/>
@@ -24,6 +27,7 @@ namespace SNow.Core
         {
         }
 
+        /// <inheritdoc/>
         public async Task<JsonElement> GetByIdAsync(Guid id)
         {
 
@@ -32,30 +36,35 @@ namespace SNow.Core
 
         }
 
+        /// <inheritdoc/>
         public ITable Limit(int limit)
         {
             _pageSize = limit;
             return this;
         }
 
+        /// <inheritdoc/>
         public ITable OrderBy(string orderBy)
         {
             _order += string.IsNullOrEmpty(_order) ? "ORDERBY" + orderBy : "^ORDERBY" + orderBy;
             return this;
         }
 
+        /// <inheritdoc/>
         public ITable OrderByDesc(string orderByDesc)
         {
             _order += string.IsNullOrEmpty(_order) ? "ORDERBYDESC" + orderByDesc : "^ORDERBYDESC" + orderByDesc;
             return this;
         }
 
+        /// <inheritdoc/>
         public ITable Select(string[] fields)
         {
             _select = fields.ToList();
             return this;
         }
 
+        /// <inheritdoc/>
         public ITable SetHeaders(List<KeyValuePair<string, string>> entries)
         {
             foreach (var entry in entries)
@@ -65,6 +74,7 @@ namespace SNow.Core
             return this;
         }
 
+        /// <inheritdoc/>
         public async Task<JsonElement> Update(Guid id, object data, bool excludeReferenceLinks = true)
         {
             var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
@@ -82,6 +92,7 @@ namespace SNow.Core
             return this;
         }
 
+        /// <inheritdoc/>
         public async Task<List<JsonElement>> ToListAsync(int? page = null)
         {
             var url = page == null ? RequestGetUrl : RequestUrl + $"&sysparm_offset={page * _pageSize}";
@@ -94,6 +105,7 @@ namespace SNow.Core
             return result;
         }
 
+        /// <inheritdoc/>
         public async Task<JsonElement> Create(object model)
         {
             var url = $"{SN.BaseAddress}/table/{_tableName}";
@@ -101,13 +113,47 @@ namespace SNow.Core
             var result = await _httpClient.PostActionResultAsync<JsonElement>(url, model, SN.AuthenticateAsync);
             return result;
         }
+
+        /// <inheritdoc/>
+        public async Task<List<JsonElement>> AllToListAsync()
+        {
+            var page = 0;
+            var pagedData = await ToListAsync(page++);
+
+            List<JsonElement> data = new List<JsonElement>();
+            while (pagedData.Count > 0)
+            {
+                try
+                {
+                    if(_logger != null)
+                        _logger.LogInformation("{n} Paged{t}s: {time}", pagedData.Count, typeof(JsonElement).Name, DateTimeOffset.Now);
+                    data.AddRange(pagedData);
+
+                    pagedData = await ToListAsync(page++);
+                }
+                catch (Exception ex)
+                {
+                    if (_logger != null)
+                    {
+                        _logger.LogError("Error while retrieving {T}, {message} : {stack}", typeof(JsonElement).Name, ex.Message, ex.StackTrace);
+                        _logger.LogError("Ignoring page {p}...", RequestUrl);
+                    }
+                }
+            }
+            return data;
+        }
     }
+    /// <inheritdoc/>
     public class Table<T> : TableBase, ITable<T> where T : ServiceNowBaseModel
     {
-        private List<(string PropName, string AttName)> _props = new List<(string PropName, string AttName)>();
+        private readonly List<(string PropName, string AttName)> _props = new List<(string PropName, string AttName)>();
+        /// <summary>
+        /// 
+        /// </summary>
         public string _where;
-        private bool _withFilterAttribute = false;
+        private readonly bool _withFilterAttribute = false;
 
+        /// <inheritdoc/>
         public Table(IServiceNow serviceNow, string tableName, ILogger logger = null) : base(serviceNow, tableName, logger)
         {
             _select = ClassReflections.GetPropertieNamesInJsonFormat<T>();
@@ -115,6 +161,7 @@ namespace SNow.Core
             _props = ClassReflections.GetJsonPropertyNameData<T>();
         }
 
+        /// <inheritdoc/>
         public Table(IServiceNow serviceNow, ILogger logger = null) : base(serviceNow, "", logger)
         {
             _select = ClassReflections.GetPropertieNamesInJsonFormat<T>();
@@ -153,6 +200,7 @@ namespace SNow.Core
             #endregion
 
         }
+
 
         ///<inheritdoc/>
         public ITable<T> Limit(int limit)
@@ -264,6 +312,7 @@ namespace SNow.Core
             return this;
         }
 
+        /// <inheritdoc/>
         public async Task<List<T>> ToListAsync(int? page)
         {
             if (SN.Token == null && SN.BasicAuthParams == null)
@@ -299,7 +348,7 @@ namespace SNow.Core
             return result;
         }
 
-        async Task<T> ITable<T>.Update(Guid? id, object data, bool excludeReferenceLinks = true)
+        async Task<T> ITable<T>.Update(Guid? id, object data, bool excludeReferenceLinks)
         {
             var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}{excludeLinks}";
@@ -308,6 +357,32 @@ namespace SNow.Core
 
             return result;
         }
+
+        /// <inheritdoc/>
+        public async Task<List<T>> AllToListAsync()
+        {
+            var page = 0;
+            var pagedData = await ToListAsync(page++);
+
+            List<T> data = new List<T>();
+            while (pagedData.Count > 0)
+            {
+                try
+                {
+                    _logger.LogInformation("{n} Paged{t}s: {time}", pagedData.Count, typeof(T).Name, DateTimeOffset.Now);
+                    data.AddRange(pagedData);
+
+                    pagedData = await ToListAsync(page++);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("Error while retrieving {T}, {message} : {stack}", typeof(T).Name, ex.Message, ex.StackTrace);
+                    _logger.LogError("Ignoring page {p}...", RequestUrl);
+                }
+            }
+            return data;
+
+        }
     }
 
     /// <summary>
@@ -315,9 +390,14 @@ namespace SNow.Core
     /// </summary>
     public class TableBase
     {
+        /// <summary>
+        /// ServiceNow Instance common to all table  
+        /// </summary>
         public IServiceNow SN { get; set; }
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         protected HttpClient _httpClient;
         protected readonly ILogger _logger;
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 
         /// <summary>
@@ -331,12 +411,14 @@ namespace SNow.Core
         protected string RequestGetUrl => RequestURI(true);
 
         //set internal to allow tests
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         protected string _query;
         protected int? _pageSize = 10000;
         protected string _tableName;
         protected string _order = "";
         protected List<string> _select;
         protected int _currentPage = 0;
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         /// <summary>
         /// Used by typed and untyped Table
@@ -402,6 +484,7 @@ namespace SNow.Core
             return $"{mainUri}{string.Join("&", allArgs)}";
         }
 
+        /// <inheritdoc/>
         public async Task<bool> Delete(Guid id)
         {
             if (SN.Token == null)

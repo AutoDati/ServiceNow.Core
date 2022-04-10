@@ -101,7 +101,7 @@ namespace Test_Console
                     .Select(new[] { "sys_id", "short_description" })
                     .WithQuery("short_description like some nice")
                     .OrderBy("sys_id")
-                    .ToListAsync();
+                    .AllToListAsync();
 
                 incidentsNotTyped.ForEach(incident => incident.Display());
 
