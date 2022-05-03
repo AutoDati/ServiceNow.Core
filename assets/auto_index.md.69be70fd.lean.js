@@ -1,0 +1,1 @@
+import{_ as t,y as e,x as o,W as l}from"./plugin-vue_export-helper.7cf9b872.js";const C='{"title":"ServiceNow.Core","description":"","frontmatter":{},"headers":[],"relativePath":"auto/index.md","lastUpdated":1651619825068}',r={},a=l("",2),i=[a];function d(s,n,_,h,S,c){return o(),e("div",null,i)}var x=t(r,[["render",d]]);export{C as __pageData,x as default};
