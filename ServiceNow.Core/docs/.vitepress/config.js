@@ -11,11 +11,11 @@
     // editLinkText: 'Edit this page on GitHub',
     // lastUpdated: 'Last Updated',
 
-    // algolia: {
-    //   appId: "xxxxxxxxx",
-    //   apiKey: "cccccccccc",
-    //   indexName: "servicenow",
-    // },
+    algolia: {
+      appId: "HK9BCTMQOX",
+      apiKey: "8119408cf84cbade754f568a5075a213",
+      indexName: "servicenow",
+    },
 
     nav: [
       {
