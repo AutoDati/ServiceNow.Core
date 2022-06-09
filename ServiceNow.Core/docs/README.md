@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /guide/getting-started
+      link: /ServiceNow.Core/guide/getting-started
 
 features:
   - title: 🧰 Easy to use
