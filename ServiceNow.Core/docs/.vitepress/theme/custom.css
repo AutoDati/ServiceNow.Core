@@ -1,0 +1,31 @@
+:root {
+  --vp-home-hero-name-background: -webkit-linear-gradient(
+    120deg,
+    #41a23d 20%,
+    #cb413e 40%,
+    #41a23d
+  );
+  --vp-home-hero-image-filter: blur(102px);
+  --vp-home-hero-image-background-image: linear-gradient(
+    45deg,
+    #41a23d 10%,
+    #cb413e 80%,
+    #41a23d
+  );
+  --vp-home-hero-name-color: transparent;
+}
+
+.clip {
+  background: var(--vp-home-hero-name-background);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: var(--vp-home-hero-name-color);
+}
+
+.image-src {
+  width: 300px;
+}
+
+.VPNavBarTitle .title {
+  display: none;
+}

@@ -48,15 +48,15 @@ function getGuideSidebar() {
   return [
     {
       text: "Introduction",
-      children: [
-        { text: "What is ServiceNow.Core?", link: "/" },
+      items: [
+        { text: "Home", link: "/" },
         { text: "Getting Started", link: "/guide/getting-started" },
         { text: "Configuration", link: "/config/Authentication" },
       ],
     },
     {
       text: "Advanced",
-      children: [
+      items: [
         { text: "Custom Flow", link: "/guide/catalog-item" },
         { text: "Import Set", link: "/guide/import-set" },
       ],
@@ -68,7 +68,8 @@ function getConfigSidebar() {
   return [
     {
       text: "Configurations",
-      children: [
+      items: [
+        { text: "Home", link: "/" },
         { text: "Authentication", link: "/config/Authentication" },
         { text: "Serializers", link: "/config/Serializers" },
       ],

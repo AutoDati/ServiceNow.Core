@@ -1,11 +1,18 @@
 ---
-home: true
-heroImage: /icon.png
-heroAlt: Logo image
-heroText: Service Now Fluent API
-tagline: Easy to connect and interact with Service Now API using fluent API!
-actionText: Get Started
-actionLink: /guide/getting-started
+layout: home
+
+hero:
+  name: ServiceNow.Core
+  text: Service Now Fluent API Framework
+  tagline: Easy to connect and interact with Service Now API using fluent API!
+  image:
+    src: icon.png
+    alt: ServiceNow.Core logo
+  actions:
+    - theme: brand
+      text: Get Started
+      link: /guide/getting-started
+
 features:
   - title: 🧰 Easy to use
     details: Based on the config file it connects and authenticate without one line of code.
@@ -26,7 +33,5 @@ features:
 footer: MIT Licensed | Copyright © 2019-present Emerson Bottero
 ---
 
-### Dependencies
-
-- .Net Core 3.1
-- .Net Framework 4.6.1
+<div>please...</div>
+<BarTitleFix></BarTitleFix>
