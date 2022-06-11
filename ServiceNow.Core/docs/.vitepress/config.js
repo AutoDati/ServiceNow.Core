@@ -1,4 +1,6 @@
-﻿module.exports = {
+﻿import GetAutoSideBar from "./theme/auto-sidebar";
+
+module.exports = {
   title: "ServiceNow.Core",
   description: "Your easy to use REST API integration library",
   base: "/ServiceNow.Core/",
@@ -7,9 +9,6 @@
     repo: "emersonbottero/ServiceNow.Core",
     docsDir: "docs",
     docsBranch: "main",
-    //editLinks: true,
-    // editLinkText: 'Edit this page on GitHub',
-    // lastUpdated: 'Last Updated',
 
     algolia: {
       appId: "HK9BCTMQOX",
@@ -23,7 +22,6 @@
         link: "/guide/getting-started",
         activeMatch: "^/guide/",
       },
-      // { text: 'Home', link: '/index.html', activeMatch: '/index.html' },
       {
         text: "Config Reference",
         link: "/config/Authentication",
@@ -39,7 +37,7 @@
     sidebar: {
       "/guide/": getGuideSidebar(),
       "/config/": getConfigSidebar(),
-      "/": getGuideSidebar(),
+      "/auto/": GetAutoSideBar("/auto/"),
     },
   },
 };
