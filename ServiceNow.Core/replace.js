@@ -3,13 +3,12 @@ const fs = require("fs");
 const path = require("path");
 
 const options = {
-  files: "docs/applications/**/*.md",
+  files: "docs/auto/*.md",
+
   from: /\[.*?\]/gi, // string or regex
 
   to: function (match) {
-    if (match.includes("<"))
-      return match.replace("<", "\\<").replace(">", "\\>");
-    return match;
+    return match.replace(/<\/?[^>]*?>/gi, " ");
   },
 };
 
