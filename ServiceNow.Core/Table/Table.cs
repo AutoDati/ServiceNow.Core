@@ -246,13 +246,15 @@ namespace SNow.Core
         ///<inheritdoc/>
         public ITable<T> Where(Expression<Func<T, bool>> expr)
         {
+            var filterquery = "";
             if (_withFilterAttribute)
-                throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
+                filterquery = _query;// throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
 
             var visitor = new PrintingVisitor<T>(expr);
             visitor.Visit(expr);
             _query = visitor.query;
             _query = _query.Replace("(", "").Replace(")", "");
+            _query = _query + "^" + filterquery;
             _query = Query.Parse(_query);
             _currentPage = 0;
             return this;
@@ -271,8 +273,9 @@ namespace SNow.Core
         ///<inheritdoc/>
         public ITable<T> WithQuery(Expression<Func<T, string>> expression)
         {
+            var filterquery = "";
             if (_withFilterAttribute)
-                throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
+                filterquery = _query;// throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
 
             //TODO: Should we be using expression tree to extract the data?
             var arguments = (expression.Body as MethodCallExpression)?.Arguments;
@@ -307,6 +310,7 @@ namespace SNow.Core
                 }
 
             var result = string.Format(query, queryArguments.ToArray());
+            _query = _query + "^" + filterquery;
             _query = Query.Parse(result);
             _currentPage = 0;
             return this;
