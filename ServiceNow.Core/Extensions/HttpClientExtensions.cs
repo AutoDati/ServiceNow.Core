@@ -29,8 +29,8 @@ namespace SNow.Core.Extensions
             return await Policy.Handle<Exception>()
                 .RetryAsync(2, (exception, retry) =>
                 {
-                    logger?.LogError("Error in HttpGet from {link}: {e}", requestUri, exception.InnerException);
-                    logger?.LogError("Retrying turn: {e}", retry);
+                    logger?.LogWarning("Error in HttpGet from {link}: {e}", requestUri, exception.InnerException);
+                    logger?.LogWarning("Retrying turn: {e}", retry);
                 })
                 .ExecuteAsync<T>(async () =>
                 {

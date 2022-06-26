@@ -254,7 +254,10 @@ namespace SNow.Core
             visitor.Visit(expr);
             _query = visitor.query;
             _query = _query.Replace("(", "").Replace(")", "");
-            _query = _query + "^" + filterquery;
+
+            if (_withFilterAttribute)
+                _query = _query + "^" + filterquery;
+
             _query = Query.Parse(_query);
             _currentPage = 0;
             return this;
@@ -310,7 +313,10 @@ namespace SNow.Core
                 }
 
             var result = string.Format(query, queryArguments.ToArray());
-            _query = _query + "^" + filterquery;
+
+            if (_withFilterAttribute)
+                _query = _query + "^" + filterquery;
+
             _query = Query.Parse(result);
             _currentPage = 0;
             return this;
