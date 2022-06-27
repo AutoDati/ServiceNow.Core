@@ -40,6 +40,10 @@ module.exports = {
       "/config/": getConfigSidebar(),
       "/auto/": GetAutoSideBar("/auto/"),
     },
+    footer: {
+      message: "Released under the MIT License.",
+      copyright: "Copyright © 2022-present Emerson Bottero",
+    },
   },
 };
 
@@ -48,7 +52,6 @@ function getGuideSidebar() {
     {
       text: "Introduction",
       items: [
-        { text: "Home", link: "/" },
         { text: "Getting Started", link: "/guide/getting-started" },
         { text: "Configuration", link: "/config/Authentication" },
       ],
@@ -68,7 +71,6 @@ function getConfigSidebar() {
     {
       text: "Configurations",
       items: [
-        { text: "Home", link: "/" },
         { text: "Authentication", link: "/config/Authentication" },
         { text: "Serializers", link: "/config/Serializers" },
       ],
