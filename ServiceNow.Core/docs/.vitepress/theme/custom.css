@@ -1,8 +1,8 @@
 :root {
   --vp-home-hero-name-background: -webkit-linear-gradient(
     120deg,
-    #41a23d 20%,
-    #cb413e 40%,
+    #41a23d 18%,
+    #cb413e 101%,
     #41a23d
   );
   --vp-home-hero-image-filter: blur(102px);
@@ -24,8 +24,4 @@
 
 .image-src {
   width: 300px;
-}
-
-.VPNavBarTitle .title {
-  display: none;
 }

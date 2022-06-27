@@ -9,6 +9,7 @@ module.exports = {
     repo: "emersonbottero/ServiceNow.Core",
     docsDir: "docs",
     docsBranch: "main",
+    logo: "icon.png",
 
     algolia: {
       appId: "HK9BCTMQOX",
