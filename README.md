@@ -2,7 +2,7 @@
 
 Easy to connect, and interact with Service Now API
 
-📕 See the [Full Documentation](https://emersonbottero.github.io/ServiceNow.Core/)
+📕 See the [Full Documentation](https://autodati.github.io/ServiceNow.Core/)
 
 ## Description
 
