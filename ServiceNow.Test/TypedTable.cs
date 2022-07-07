@@ -83,7 +83,33 @@ namespace Snow.Test
                 .Where(x => x.Name is DumpServer && x.Name.Contains("Branco") && x.Age != 10);
 
             //Assert
-            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10000&sysparm_query=strange_name INSTANCEOF snow_table_name ^ strange_nameLIKEBranco ^ age!=10");
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames)}&sysparm_limit=10000&sysparm_query=strange_name INSTANCEOF snow_table_name ^ strange_nameLIKEBranco ^ age!=10&sysparm_exclude_reference_link=true");
+        }
+
+        [Fact]
+        public void ShouldQueryWithFilter()
+        {
+            //Act
+            var UserTable = TestScope.TableInstance2();
+            UserTable.SN.Token = "blablabla";
+            UserTable
+                .WithQuery(x => $@"{x.Age} != 10"); 
+
+            //Assert
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames2)}&sysparm_limit=10000&sysparm_query=age!=10^nameLikeBottero&sysparm_exclude_reference_link=true");
+        }
+
+        [Fact]
+        public void ShouldUpdateUrlParamsWhereWithFilter()
+        {
+            //Act
+            var UserTable = TestScope.TableInstance2();
+            UserTable.SN.Token = "blablabla";
+            UserTable
+                .Where(x => x.Name is DumpServer &&  x.Age != 10);
+
+            //Assert
+            UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames2)}&sysparm_limit=10000&sysparm_query=name INSTANCEOF snow_table_name ^ age!=10^nameLikeBottero&sysparm_exclude_reference_link=true");
         }
     }
 }

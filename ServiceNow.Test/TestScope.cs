@@ -15,6 +15,7 @@ namespace Snow.Test
         public static string tableName => "sys_user";
 
         public static List<string> PropNames => ClassReflections.GetPropertieNamesInJsonFormat<DumpUser>();
+        public static List<string> PropNames2 => ClassReflections.GetPropertieNamesInJsonFormat<DumpUser2>();
 
         public static Table<DumpUser> TableInstance()
         {
@@ -22,6 +23,14 @@ namespace Snow.Test
 
             var UserTable = SN.UsingTable<DumpUser>(tableName);
             return (Table<DumpUser>)UserTable;
+        }
+
+        public static Table<DumpUser2> TableInstance2()
+        {
+            var SN = new ServiceNow(Config);
+
+            var UserTable = SN.UsingTable<DumpUser2>(tableName);
+            return (Table<DumpUser2>)UserTable;
         }
 
     }

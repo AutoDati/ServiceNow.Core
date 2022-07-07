@@ -159,6 +159,18 @@ namespace SNow.Core
             _select = ClassReflections.GetPropertieNamesInJsonFormat<T>();
             _tableName = tableName;
             _props = ClassReflections.GetJsonPropertyNameData<T>();
+            #region Filter
+            var attrs = typeof(T).GetCustomAttributes(typeof(SnowFilterAttribute), true);
+
+            if (attrs.Any())
+                _withFilterAttribute = true;
+
+            foreach (object attr in attrs)
+            {
+                var snowFilterAttr = attr as SnowFilterAttribute;
+                _query = snowFilterAttr.Query;
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -189,7 +201,7 @@ namespace SNow.Core
             #region Filter
             attrs = typeof(T).GetCustomAttributes(typeof(SnowFilterAttribute), true);
 
-            if (attrs.Length > 0)
+            if (attrs.Any())
                 _withFilterAttribute = true;
 
             foreach (object attr in attrs)
@@ -256,7 +268,7 @@ namespace SNow.Core
             _query = _query.Replace("(", "").Replace(")", "");
 
             if (_withFilterAttribute)
-                _query = _query + "^" + filterquery;
+                _query += "^" + filterquery;
 
             _query = Query.Parse(_query);
             _currentPage = 0;
@@ -312,10 +324,10 @@ namespace SNow.Core
                     }
                 }
 
-            var result = string.Format(query, queryArguments.ToArray());
 
             if (_withFilterAttribute)
-                _query = _query + "^" + filterquery;
+                query += "^" + filterquery;
+            var result = string.Format(query, queryArguments.ToArray());           
 
             _query = Query.Parse(result);
             _currentPage = 0;
