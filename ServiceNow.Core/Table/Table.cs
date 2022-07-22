@@ -106,10 +106,11 @@ namespace SNow.Core
         }
 
         /// <inheritdoc/>
-        public async Task<JsonElement> Create(object model)
+        public async Task<JsonElement> Create(object model, bool excludeReferenceLink = false)
         {
-            var url = $"{SN.BaseAddress}/table/{_tableName}";
-
+            var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : ""; 
+            var url = $"{SN.BaseAddress}/table/{_tableName}{excludeLinks}";
+            
             var result = await _httpClient.PostActionResultAsync<JsonElement>(url, model, SN.AuthenticateAsync);
             return result;
         }
