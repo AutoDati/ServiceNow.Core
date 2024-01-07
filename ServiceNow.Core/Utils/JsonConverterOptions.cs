@@ -251,6 +251,50 @@ namespace SNow.Core.Utils
             }
         }
 
+#if NET5_0
+    /// <summary>
+        /// Convert string dates format between DateTime and ServiceNow
+        /// </summary>
+        public class NullableDateOnlyOption : JsonConverter<DateTime?>
+        {
+            public override DateOnly? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                var value = reader.GetString();
+                if(String.IsNullOrEmpty(value))
+                    return null;
+
+                return DateOnly.ParseExact(value, "yyyy-MM-dd", null)
+;
+            }
+
+            public override void Write(Utf8JsonWriter writer, DateOnly? value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value?.ToString("yyyy-MM-dd"));
+            }
+        }
+
+
+        /// <summary>
+        /// Convert string dates format between DateTime and ServiceNow
+        /// </summary>
+        public class DateOnlyOption : JsonConverter<DateTime>
+        {
+            public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                var value = reader.GetString();
+                if (String.IsNullOrEmpty(value))
+                    return new DateTime(); 
+
+                return DateTime.ParseExact(value, "yyyy-MM-dd HH:mm:ss", null);;
+            }
+
+            public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToString("yyyy-MM-dd HH:mm:ss"));
+            }
+        }
+#endif
+
         public enum BooleanFormat
         {
             Boolean,
