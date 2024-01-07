@@ -95,7 +95,7 @@ namespace SNow.Core
         {
             var url = page == null ? RequestGetUrl : RequestUrl + $"&sysparm_offset={page * _pageSize}";
             _currentPage++;
-            var result = await _httpClient.GetActionResultAsync<List<JsonElement>>(url, SN.AuthenticateAsync, _logger);
+            var result = await _httpClient.GetActionResultAsync<List<JsonElement>>(Uri.EscapeDataString(url), SN.AuthenticateAsync, _logger);
 
             if (result.Count == 0)
                 _currentPage = 0;
