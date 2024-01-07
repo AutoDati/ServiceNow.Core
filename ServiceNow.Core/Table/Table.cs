@@ -448,18 +448,18 @@ namespace SNow.Core
 
             if (query.Length > "sysparm_query=".Length)
             {
-                var spllited = query.Split(new string[] { "=", "!=", "^", "^OR", "OR", "LIKE", ">", ">=", "<", "<=", "ISNOTEMPTY", "ISEMPTY", "STARTSWITH", "ENDSWITH", "NOT LIKE"  }, StringSplitOptions.None);
-                for (int i = 0; i < spllited.Length; i++)
+                var splitted = query.Split(new string[] { "=", "!=", "^", "^OR", "OR", "LIKE", ">", ">=", "<", "<=", "ISNOTEMPTY", "ISEMPTY", "STARTSWITH", "ENDSWITH", "NOT LIKE"  }, StringSplitOptions.None);
+                for (int i = 0; i < splitted.Length; i++)
                 {
                     //Escape parameters.
                     if(i > 0 && i % 2 == 0)
                     {
-                        query = query.Replace(spllited[i], Uri.EscapeDataString(spllited[i]));
+                        query = query.Replace(splitted[i], Uri.EscapeDataString(splitted[i]));
                     }
                     //Fix Negates
-                    if (_select.Any(p => "Not" + p == spllited[i])){
-                        var prop = spllited[i];
-                        var value = spllited[i + 1];
+                    if (_select.Any(p => "Not" + p == splitted[i])){
+                        var prop = splitted[i];
+                        var value = splitted[i + 1];
                 
                         query = NegateQuery(prop, value, query);
                     }
