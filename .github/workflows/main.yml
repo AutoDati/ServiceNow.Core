@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: ['5.0.x']
+        dotnet-version: ['6.0.x']
         node-version: [16]
     steps:
       - name: Checkout 🛎️
