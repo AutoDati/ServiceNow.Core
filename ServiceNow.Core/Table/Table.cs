@@ -75,7 +75,7 @@ namespace SNow.Core
         }
 
         /// <inheritdoc/>
-        public async Task<JsonElement> Update(Guid id, object data, bool excludeReferenceLinks = true)
+        public async Task<JsonElement> UpdateAsync(Guid id, object data, bool excludeReferenceLinks = true)
         {
             var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}{excludeLinks}";
@@ -106,7 +106,7 @@ namespace SNow.Core
         }
 
         /// <inheritdoc/>
-        public async Task<JsonElement> Create(object model)
+        public async Task<JsonElement> CreateAsync(object model)
         {
             var url = $"{SN.BaseAddress}/table/{_tableName}";
 
@@ -357,12 +357,12 @@ namespace SNow.Core
             return await _httpClient.GetActionResultAsync<T>(url, SN.AuthenticateAsync, _logger);
         }
 
-        async Task<bool> ITable<T>.Delete(Guid id)
+        async Task<bool> ITable<T>.DeleteAsync(Guid id)
         {
-            return await Delete(id);
+            return await DeleteAsync(id);
         }
 
-        async Task<T> ITable<T>.Create(object model)
+        async Task<T> ITable<T>.CreateAsync(object model)
         {
             var url = $"{SN.BaseAddress}/table/{_tableName}";
 
@@ -370,7 +370,7 @@ namespace SNow.Core
             return result;
         }
 
-        async Task<T> ITable<T>.Update(Guid? id, object data, bool excludeReferenceLinks)
+        async Task<T> ITable<T>.UpdateAsync(Guid? id, object data, bool excludeReferenceLinks)
         {
             var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}{excludeLinks}";
@@ -507,7 +507,7 @@ namespace SNow.Core
         }
 
         /// <inheritdoc/>
-        public async Task<bool> Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
             if (SN.Token == null)
                 await SN.AuthenticateAsync();
