@@ -17,9 +17,7 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("ServiceNow.Core.Test")]
 namespace SNow.Core
 {
-    /// <summary>
-    /// 
-    /// </summary>
+    ///<inheritdoc/>
     public class Table : TableBase, ITable
     {
         ///<inheritdoc/>
