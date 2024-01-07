@@ -78,13 +78,13 @@ namespace SNow.Core
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<bool> Delete(Guid id);
+        Task<bool> DeleteAsync(Guid id);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        Task<JsonElement> Create(object model);
+        Task<JsonElement> CreateAsync(object model);
         /// <summary>
         /// 
         /// </summary>
@@ -92,7 +92,7 @@ namespace SNow.Core
         /// <param name="data"></param>
         /// <param name="excludeLinks"></param>
         /// <returns></returns>
-        Task<JsonElement> Update(Guid id, object data, bool excludeLinks = true);
+        Task<JsonElement> UpdateAsync(Guid id, object data, bool excludeLinks = true);
 
     }
 
@@ -175,13 +175,13 @@ namespace SNow.Core
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<bool> Delete(Guid id);
+        Task<bool> DeleteAsync(Guid id);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        Task<T> Create(object model);
+        Task<T> CreateAsync(object model);
         /// <summary>
         /// 
         /// </summary>
@@ -189,6 +189,6 @@ namespace SNow.Core
         /// <param name="data"></param>
         /// <param name="excludeLinks"></param>
         /// <returns></returns>
-        Task<T> Update(Guid? id, object data, bool excludeLinks = true);
+        Task<T> UpdateAsync(Guid? id, object data, bool excludeLinks = true);
     }
 }
