@@ -45,7 +45,7 @@ namespace SNow.Core.Extensions
                     await HandleUnssucessfullRequestAsync(response);
 
                     //In case you try to get an specif ID but is was not found.
-                    if (!response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    if (!response.IsSuccessStatusCode && response.StatusCode == HttpStatusCode.NotFound)
                         return default;
 
                     return await response.DeserializeAsync<T>();

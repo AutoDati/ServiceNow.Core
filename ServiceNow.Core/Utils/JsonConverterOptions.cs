@@ -251,11 +251,11 @@ namespace SNow.Core.Utils
             }
         }
 
-#if NET5_0
-    /// <summary>
-        /// Convert string dates format between DateTime and ServiceNow
+#if NET6_0
+        /// <summary>
+        /// Convert string dates format between DateOnly and ServiceNow
         /// </summary>
-        public class NullableDateOnlyOption : JsonConverter<DateTime?>
+        public class NullableDateOnlyOption : JsonConverter<DateOnly?>
         {
             public override DateOnly? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
@@ -263,7 +263,7 @@ namespace SNow.Core.Utils
                 if(String.IsNullOrEmpty(value))
                     return null;
 
-                return DateOnly.ParseExact(value, "yyyy-MM-dd", null)
+                return DateOnly.ParseExact(value.Split(" ")[0], "yyyy-MM-dd", null)
 ;
             }
 
@@ -275,22 +275,22 @@ namespace SNow.Core.Utils
 
 
         /// <summary>
-        /// Convert string dates format between DateTime and ServiceNow
+        /// Convert string dates format between DateOnly and ServiceNow
         /// </summary>
-        public class DateOnlyOption : JsonConverter<DateTime>
+        public class DateOnlyOption : JsonConverter<DateOnly>
         {
-            public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
                 var value = reader.GetString();
                 if (String.IsNullOrEmpty(value))
-                    return new DateTime(); 
+                    return new DateOnly(); 
 
-                return DateTime.ParseExact(value, "yyyy-MM-dd HH:mm:ss", null);;
+                return DateOnly.ParseExact(value.Split(" ")[0], "yyyy-MM-dd", null);;
             }
 
-            public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+            public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
             {
-                writer.WriteStringValue(value.ToString("yyyy-MM-dd HH:mm:ss"));
+                writer.WriteStringValue(value.ToString("yyyy-MM-dd"));
             }
         }
 #endif
@@ -400,6 +400,10 @@ namespace SNow.Core.Utils
             _options.Converters.Add(new DateOption());
             _options.Converters.Add(new NullableDateOption());
 
+#if NET6_0
+            _options.Converters.Add(new DateOnlyOption());
+            _options.Converters.Add(new NullableDateOnlyOption());
+#endif
             _options.Converters.Add(new CustomBooleanConverter());
             foreach (JsonConverter converter in customConverters)
             {

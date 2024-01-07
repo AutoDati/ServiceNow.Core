@@ -108,7 +108,7 @@ namespace SNow.Core
 
         /// <summary>
         /// Set query parameters to the API request using Where clause.<br/>
-        /// Don't use it together with "WithQuery"
+        /// Order matters so x => x.id == id works while x => id == x.id don't. <br/> 
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
@@ -120,14 +120,6 @@ namespace SNow.Core
         /// <param name="entries"></param>
         /// <returns></returns>
         ITable<T> SetHeaders(List<KeyValuePair<string, string>> entries);
-        /// <summary>
-        /// The query must have only those operators
-        /// and, or, like, =, !=, startsWith, endsWith
-        /// see <see href="https://docs.servicenow.com/bundle/rome-application-development/page/integrate/inbound-rest/concept/c_RESTAPI.html">SN Rest Operators</see>
-        /// </summary>
-        /// <param name="expression">String that has access to the table model
-        /// ex.: x => $"{x.Name} like Something and {x.Age} = 10"</param>
-        ITable<T> WithQuery(Expression<Func<T, string>> expression);
         
         /// <summary>
         /// The maximum number of results returned per page (default: 10,000)

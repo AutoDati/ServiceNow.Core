@@ -136,7 +136,7 @@ JsonConverterOptions.ConfigureCustomSerializers(new[] {
 });
 ```
 
-## Default Serializers for Guid and DateTime
+## Default Serializers for Guid and DateTime and DateOnly
 
 When there is no value in the json response (while using not nullable version) it will return:
 - new DateTime() "{1/1/0001 12:00:00 AM}" 
@@ -153,38 +153,3 @@ That happens because ServiceNow not always return null, in those cases it return
 
 Emerson Bottero Branco DBAM Automation
 
-## Version History
-
-- 0.8.0
-    - Table Creation
-    - Select
-    - Set Headers
-    - With Query
-    - Limit
-    - OrderBy
-    - OrderByDesc
-    - ToList
-    - Get
-    - Delete
-    - Create
-    - Update 
-    - Compression
-    - Bug fix (authenticate and when token expiries)
-    - Extensions method
-    - More complex console demo examples
-    - Authentication Improvements
-    - Working web API demo (unavailable for now)
-    - Custom Serializers Settings
-    - New JsonConverters for null-able and normal types
-    - New Update method
-    - When writing new Classes don't set sys_id as null
-    - Enum.ToDescription Method
-    - WithQuery with no arguments
-    - ImportSet API
-    - SnowTable Attribute in classes (remove the need to pass table name as argument in WithTable methods)
-- 0.8.1
-    - Where Statement for usingTables
-- 0.8.2
-    - Small Fix and simples documentation
-- 0.8.3
-    - INSTANCEOF and set property to lower case in sysparam

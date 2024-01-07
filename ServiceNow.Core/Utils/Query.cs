@@ -18,8 +18,10 @@ namespace SNow.Core.Utils
         public static string Parse(string query)
         {
             var response = Regex.Replace(query, @"\s+", " ");
+                  
             response = response
                 .Replace(" = ", "=")
+                .Replace(" ^ ", "^")
                 .Replace(" != ", "!=")
                 .Replace(" AND ", "^")
                 .Replace(" and ", "^")
