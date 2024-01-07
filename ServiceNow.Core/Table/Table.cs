@@ -4,6 +4,7 @@ using SNow.Core.Extensions;
 using SNow.Core.Models;
 using SNow.Core.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,14 +13,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("ServiceNow.Core.Test")]
 namespace SNow.Core
 {
-    /// <summary>
-    /// 
-    /// </summary>
+    ///<inheritdoc/>
     public class Table : TableBase, ITable
     {
         ///<inheritdoc/>
@@ -75,7 +75,7 @@ namespace SNow.Core
         }
 
         /// <inheritdoc/>
-        public async Task<JsonElement> Update(Guid id, object data, bool excludeReferenceLinks = true)
+        public async Task<JsonElement> UpdateAsync(Guid id, object data, bool excludeReferenceLinks = true)
         {
             var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}{excludeLinks}";
@@ -106,7 +106,7 @@ namespace SNow.Core
         }
 
         /// <inheritdoc/>
-        public async Task<JsonElement> Create(object model)
+        public async Task<JsonElement> CreateAsync(object model)
         {
             var url = $"{SN.BaseAddress}/table/{_tableName}";
 
@@ -265,7 +265,7 @@ namespace SNow.Core
             var visitor = new PrintingVisitor<T>(expr);
             visitor.Visit(expr);
             _query = visitor.query;
-            _query = _query.Replace("(", "").Replace(")", "");
+            _query = _query.Replace("Convert(","").Replace("(", "").Replace(")", "");
 
             if (_withFilterAttribute)
                 _query += "^" + filterquery;
@@ -282,55 +282,6 @@ namespace SNow.Core
             {
                 _httpClient.DefaultRequestHeaders.Add(entry.Key, entry.Value);
             }
-            return this;
-        }
-
-        ///<inheritdoc/>
-        public ITable<T> WithQuery(Expression<Func<T, string>> expression)
-        {
-            var filterquery = "";
-            if (_withFilterAttribute)
-                filterquery = _query;// throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
-
-            //TODO: Should we be using expression tree to extract the data?
-            var arguments = (expression.Body as MethodCallExpression)?.Arguments;
-            var query = arguments?[0].ToString().Replace("\"", "") ?? (expression.Body as ConstantExpression).Value.ToString();
-            var queryArguments = new List<string>();
-            if (arguments != null)
-                foreach (var arg in arguments.Skip(1))
-                {
-                    if (arg.GetType().Name == "NewArrayInitExpression")
-                    {
-                        throw new Exception("More than 3 Arguments in lambda expression!!!");
-                        //var argArray = arg.ToString().Replace("new [] {", "").Replace("}", "").Split(',');
-                        //foreach (Expression subarg in (arg as MethodCallExpression).Arguments)
-                        //{
-                        //    var propName = subarg.ToString().Split('.')[1].Replace(", Object)", "");
-                        //    var attName = _props.Find(p => p.PropName == propName).AttName;
-
-                        //    //var externalArgName = arg.ToString().Contains(')') ? arg.ToString().Split(')')[1].Replace(".","") : null;
-                        //    var externalArgValue = subarg.ToString().Contains("value") ? Expression.Lambda<Func<Object>>(subarg).Compile()().ToString() : null;
-                        //    queryArguments.Add(externalArgValue ?? attName ?? propName.ToLower());
-                        //}
-                    }
-                    else
-                    {
-                        var propName = arg.ToString().Split('.')[1].Replace(", Object)", "").Replace(")", "");
-                        var attName = _props.Find(p => p.PropName == propName).AttName;
-
-                        //var externalArgName = arg.ToString().Contains(')') ? arg.ToString().Split(')')[1].Replace(".","") : null;
-                        var externalArgValue = arg.ToString().Contains("value") ? Expression.Lambda<Func<object>>(arg).Compile()().ToString() : null;
-                        queryArguments.Add(externalArgValue ?? attName ?? propName.ToLower());
-                    }
-                }
-
-
-            if (_withFilterAttribute)
-                query += "^" + filterquery;
-            var result = string.Format(query, queryArguments.ToArray());           
-
-            _query = Query.Parse(result);
-            _currentPage = 0;
             return this;
         }
 
@@ -357,12 +308,12 @@ namespace SNow.Core
             return await _httpClient.GetActionResultAsync<T>(url, SN.AuthenticateAsync, _logger);
         }
 
-        async Task<bool> ITable<T>.Delete(Guid id)
+        async Task<bool> ITable<T>.DeleteAsync(Guid id)
         {
-            return await Delete(id);
+            return await DeleteAsync(id);
         }
 
-        async Task<T> ITable<T>.Create(object model)
+        async Task<T> ITable<T>.CreateAsync(object model)
         {
             var url = $"{SN.BaseAddress}/table/{_tableName}";
 
@@ -370,7 +321,7 @@ namespace SNow.Core
             return result;
         }
 
-        async Task<T> ITable<T>.Update(Guid? id, object data, bool excludeReferenceLinks)
+        async Task<T> ITable<T>.UpdateAsync(Guid? id, object data, bool excludeReferenceLinks)
         {
             var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}{excludeLinks}";
@@ -496,18 +447,75 @@ namespace SNow.Core
                 query = query.Length > "sysparm_query=".Length ? '^' + _order : query + _order;
 
             if (query.Length > "sysparm_query=".Length)
+            {
+                var splitted = query.Split(new string[] { "=", "!=", "^", "^OR", "OR", "LIKE", ">", ">=", "<", "<=", "ISNOTEMPTY", "ISEMPTY", "STARTSWITH", "ENDSWITH", "NOT LIKE"  }, StringSplitOptions.None);
+                for (int i = 0; i < splitted.Length; i++)
+                {
+                    //Escape parameters.
+                    if(i > 0 && i % 2 == 0)
+                    {
+                        query = query.Replace(splitted[i], Uri.EscapeDataString(splitted[i]));
+                    }
+                    //Fix Negates
+                    if (_select.Any(p => "Not" + p == splitted[i])){
+                        var prop = splitted[i];
+                        var value = splitted[i + 1];
+                
+                        query = NegateQuery(prop, value, query);
+                    }
+                }
                 allArgs.Add(query);
+            }
 
             if (withCurrentPage && _pageSize != null)
                 allArgs.Add($"sysparm_offset={_currentPage * _pageSize}");
 
             allArgs.Add("sysparm_exclude_reference_link=true");
 
-            return $"{mainUri}{string.Join("&", allArgs)}";
+
+            var escapedArgs = allArgs;
+
+            return $"{mainUri}{string.Join("&", escapedArgs)}";
+        }
+
+        private string NegateQuery(string prop, string value, string query)
+        {
+            string pattern = $@"(?<={prop})(.*)(?={value})";
+            var _operator = (Regex.Match(query, pattern)).Value;
+            Console.WriteLine($"Should negate between {prop} and {value} with operator: {_operator} ");
+
+            var negatedOperator = "";
+            
+            switch (_operator)
+            {
+                case "=":
+                    negatedOperator = "!=";
+                    break;
+                case ">=":
+                    negatedOperator = "<";
+                    break;
+                case ">":
+                    negatedOperator = "<=";
+                    break;
+                case "!=":
+                    negatedOperator = "=";
+                    break;
+                case "ISEMPTY":
+                    negatedOperator = "ISNOTEMPTY";
+                    break;
+                case "LIKE":
+                    negatedOperator = "NOT LIKE";
+                    break;
+                case "NOT LIKE":
+                    negatedOperator = "LIKE";
+                    break;
+            }
+
+            return query.Replace($"{prop}{_operator}{value}", $"{prop.Substring("Not".Length)}{negatedOperator}{value}");
         }
 
         /// <inheritdoc/>
-        public async Task<bool> Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
             if (SN.Token == null)
                 await SN.AuthenticateAsync();

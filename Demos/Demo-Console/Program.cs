@@ -28,11 +28,14 @@ namespace Test_Console
                 //    .WithQuery(x => $"{x.Name} like Branco and {x.Country} = BR");
                 //var users = await usersTable.ToListAsync();
 
+                var id = new Guid("3682abf03710200044e0bfc8bcbe5d00");
+
                 var name = "Jimmie";
                 var usersTable = ServiceNow
                     .UsingTable<User>("sys_user")
                     .Limit(2)
-                    .Where(x => x.Name.Contains(name));
+                    .Where(x => !x.Id.Equals(id) && x.Name.Contains(name) && !x.Email.Contains("&"));
+                    //.Where(x => x.Name.Contains(name) && x.Email.Contains("&"));
 
                 var users = await usersTable.ToListAsync();
 

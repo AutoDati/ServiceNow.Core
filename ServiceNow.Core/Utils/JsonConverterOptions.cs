@@ -251,6 +251,50 @@ namespace SNow.Core.Utils
             }
         }
 
+#if NET6_0
+        /// <summary>
+        /// Convert string dates format between DateOnly and ServiceNow
+        /// </summary>
+        public class NullableDateOnlyOption : JsonConverter<DateOnly?>
+        {
+            public override DateOnly? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                var value = reader.GetString();
+                if(String.IsNullOrEmpty(value))
+                    return null;
+
+                return DateOnly.ParseExact(value.Split(" ")[0], "yyyy-MM-dd", null)
+;
+            }
+
+            public override void Write(Utf8JsonWriter writer, DateOnly? value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value?.ToString("yyyy-MM-dd"));
+            }
+        }
+
+
+        /// <summary>
+        /// Convert string dates format between DateOnly and ServiceNow
+        /// </summary>
+        public class DateOnlyOption : JsonConverter<DateOnly>
+        {
+            public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                var value = reader.GetString();
+                if (String.IsNullOrEmpty(value))
+                    return new DateOnly(); 
+
+                return DateOnly.ParseExact(value.Split(" ")[0], "yyyy-MM-dd", null);;
+            }
+
+            public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToString("yyyy-MM-dd"));
+            }
+        }
+#endif
+
         public enum BooleanFormat
         {
             Boolean,
@@ -356,6 +400,10 @@ namespace SNow.Core.Utils
             _options.Converters.Add(new DateOption());
             _options.Converters.Add(new NullableDateOption());
 
+#if NET6_0
+            _options.Converters.Add(new DateOnlyOption());
+            _options.Converters.Add(new NullableDateOnlyOption());
+#endif
             _options.Converters.Add(new CustomBooleanConverter());
             foreach (JsonConverter converter in customConverters)
             {

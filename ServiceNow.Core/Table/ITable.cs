@@ -78,13 +78,13 @@ namespace SNow.Core
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<bool> Delete(Guid id);
+        Task<bool> DeleteAsync(Guid id);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        Task<JsonElement> Create(object model);
+        Task<JsonElement> CreateAsync(object model);
         /// <summary>
         /// 
         /// </summary>
@@ -92,7 +92,7 @@ namespace SNow.Core
         /// <param name="data"></param>
         /// <param name="excludeLinks"></param>
         /// <returns></returns>
-        Task<JsonElement> Update(Guid id, object data, bool excludeLinks = true);
+        Task<JsonElement> UpdateAsync(Guid id, object data, bool excludeLinks = true);
 
     }
 
@@ -108,7 +108,7 @@ namespace SNow.Core
 
         /// <summary>
         /// Set query parameters to the API request using Where clause.<br/>
-        /// Don't use it together with "WithQuery"
+        /// Order matters so x => x.id == id works while x => id == x.id don't. <br/> 
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
@@ -120,14 +120,6 @@ namespace SNow.Core
         /// <param name="entries"></param>
         /// <returns></returns>
         ITable<T> SetHeaders(List<KeyValuePair<string, string>> entries);
-        /// <summary>
-        /// The query must have only those operators
-        /// and, or, like, =, !=, startsWith, endsWith
-        /// see <see href="https://docs.servicenow.com/bundle/rome-application-development/page/integrate/inbound-rest/concept/c_RESTAPI.html">SN Rest Operators</see>
-        /// </summary>
-        /// <param name="expression">String that has access to the table model
-        /// ex.: x => $"{x.Name} like Something and {x.Age} = 10"</param>
-        ITable<T> WithQuery(Expression<Func<T, string>> expression);
         
         /// <summary>
         /// The maximum number of results returned per page (default: 10,000)
@@ -175,13 +167,13 @@ namespace SNow.Core
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<bool> Delete(Guid id);
+        Task<bool> DeleteAsync(Guid id);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        Task<T> Create(object model);
+        Task<T> CreateAsync(object model);
         /// <summary>
         /// 
         /// </summary>
@@ -189,6 +181,6 @@ namespace SNow.Core
         /// <param name="data"></param>
         /// <param name="excludeLinks"></param>
         /// <returns></returns>
-        Task<T> Update(Guid? id, object data, bool excludeLinks = true);
+        Task<T> UpdateAsync(Guid? id, object data, bool excludeLinks = true);
     }
 }

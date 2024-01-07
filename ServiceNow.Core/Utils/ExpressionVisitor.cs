@@ -13,6 +13,8 @@ namespace SNow.Core.Utils
         public string query;
         private ParameterExpression arg;
         private List<(string prop, string attr)> jsonProperties = new List<(string, string)>();
+        //private List<string> properties = new List<string>();
+        
 
         public PrintingVisitor(Expression<Func<T, bool>> exp)
         {
@@ -22,12 +24,14 @@ namespace SNow.Core.Utils
             var props = typeof(T).GetProperties();
             foreach (var prop in props)
             {
-                var attr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
+                var attr = prop.GetCustomAttribute<JsonPropertyNameAttribute>(true);
                 if (attr != null)
                 {
                     Debug.Print($"{prop.Name} : {attr.Name}");
                     jsonProperties.Add((prop.Name, attr.Name));
                 }
+                //else
+                //    properties.Add(prop.Name);
             }
 
         }
@@ -70,10 +74,19 @@ namespace SNow.Core.Utils
         //    return base.VisitParameter(node);
         //}
 
-        //protected override Expression VisitUnary(UnaryExpression node)
-        //{
-        //    return base.VisitUnary(node);
-        //}
+        protected override Expression VisitUnary(UnaryExpression node)
+        {
+            var propertyExpression = node.Operand as MemberExpression;
+            var result = base.VisitUnary(node);
+            if (propertyExpression?.Type?.Name == "Guid")
+            {
+                var guidExpression = result.Reduce() as UnaryExpression;
+                var plainGuid = (guidExpression.Operand as ConstantExpression).Value.ToString();
+                var nomalizedGuid = plainGuid.Replace("-", "");
+                query = query.Replace(plainGuid, nomalizedGuid);
+            }
+            return result;
+        }
 
         //protected override Expression VisitTry(TryExpression node)
         //{
@@ -205,6 +218,9 @@ namespace SNow.Core.Utils
 
             switch (node.Method.Name)
             {
+                case "Equals":
+                    query = query.Replace(".Equals(", " = ");
+                    break;
                 case "Contains":
                     Debug.Print(" replace with LIKE");
                     query = query.Replace(".Contains(", " LIKE ");
@@ -231,7 +247,7 @@ namespace SNow.Core.Utils
         }
 
         protected override Expression VisitConditional(ConditionalExpression node)
-        {
+        {            
             Debug.Print("Visiting Conditional {0}", node);
 
             // Recurse down to see if we can simplify...
@@ -253,8 +269,9 @@ namespace SNow.Core.Utils
             Debug.Print("Visiting Constant: {0} = {1}", node, node.Value);
             if (!node.ToString().Contains("value("))
                 query = query.Replace(node.ToString(), node.Value.ToString());
+       
 
-            query = query.Replace("Guid.Empty", "");
+                query = query.Replace("Guid.Empty", "");
             return base.VisitConstant(node);
         }
 

@@ -33,7 +33,7 @@ namespace Demo_WebApplication.Controllers
             var usersTable = _serviceNow
                     .UsingTable<User>("sys_user")
                     .Limit(4)
-                    .WithQuery(x => $"{x.Name} like Branco and {x.Country} = BR");
+                    .Where(x => x.Name.Contains("Branco") && x.Country == "BR");
             var users = await usersTable.ToListAsync();       
 
             return users;
