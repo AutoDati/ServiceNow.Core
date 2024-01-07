@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /ServiceNow.Core/guide/getting-started
+      link: /guide/getting-started
 
 features:
   - title: 🧰 Easy to use
@@ -33,5 +33,4 @@ features:
 footer: MIT Licensed | Copyright © 2019-present Emerson Bottero
 ---
 
-<div>please...</div>
 <BarTitleFix></BarTitleFix>
