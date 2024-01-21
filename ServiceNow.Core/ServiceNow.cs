@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
+using SNow.Core.API;
 using SNow.Core.Authentication;
 using SNow.Core.Models;
 using SNow.Core.ServiceCatalog;
@@ -137,6 +138,16 @@ namespace SNow.Core
                 _baseAddress = _baseAddress.EndsWith("/") ? _baseAddress + "now" : _baseAddress + "/now";
             }
 
+        }
+
+        public IAPI<T> UsingAPI<T>(string path, ILogger logger = null) where T : ServiceNowBaseModel
+        {
+            return new API<T>(this, path, logger);
+        }
+
+        public IAPI UsingAPI(string path, ILogger logger = null)
+        {
+            return new API.API(this, path, logger);
         }
     }
 }

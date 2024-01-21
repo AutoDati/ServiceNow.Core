@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using SNow.Core.API;
 using SNow.Core.Models;
 using SNow.Core.ServiceCatalog;
 using SNow.Core.SetImport;
 using System;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace SNow.Core
 {
@@ -36,6 +38,10 @@ namespace SNow.Core
         /// <param name="logger"></param>
         /// <returns></returns>
         ITable UsingTable(string tableName, ILogger logger = null);
+
+        IAPI<T> UsingAPI<T>(string path, ILogger logger = null) where T : ServiceNowBaseModel;
+
+        IAPI UsingAPI(string path, ILogger logger = null);
 
         ICatalogService UsingCatalog(Guid catalogItemId);
         ICatalogService<T> UsingCatalog<T>(Guid catalogItemId) where T : ServiceNowBaseModel;

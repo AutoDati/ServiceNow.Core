@@ -28,6 +28,11 @@ namespace Test_Console
                 //    .WithQuery(x => $"{x.Name} like Branco and {x.Country} = BR");
                 //var users = await usersTable.ToListAsync();
 
+                var customApi = ServiceNow.UsingAPI("x_755331_test");
+                var data = await customApi.GetAsync("osdb/servers");
+                var response = await data.Content.ReadAsStringAsync();
+                ConsoleColor.Green.WriteLine(response);
+
                 var id = new Guid("3682abf03710200044e0bfc8bcbe5d00");
 
                 var name = "Jimmie";
