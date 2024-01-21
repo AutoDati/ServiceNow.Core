@@ -1,0 +1,1 @@
+import{_ as t,c as e,o,U as l}from"./chunks/framework.WPXu0_gW.js";const x=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"auto/index.md","filePath":"auto/index.md"}'),r={name:"auto/index.md"},a=l("",2),i=[a];function d(n,s,_,h,S,f){return o(),e("div",null,i)}const C=t(r,[["render",d]]);export{x as __pageData,C as default};

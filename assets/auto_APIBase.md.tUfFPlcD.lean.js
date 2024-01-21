@@ -1,0 +1,1 @@
+import{_ as t,c as e,o as a,U as s}from"./chunks/framework.WPXu0_gW.js";const P=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"auto/APIBase.md","filePath":"auto/APIBase.md"}'),r={name:"auto/APIBase.md"},o=s("",9),l=[o];function i(n,h,d,c,I,p){return a(),e("div",null,l)}const g=t(r,[["render",i]]);export{P as __pageData,g as default};
