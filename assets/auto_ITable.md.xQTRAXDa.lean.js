@@ -1,1 +1,0 @@
-import{_ as t,c as e,o as l,U as a}from"./chunks/framework.WPXu0_gW.js";const f=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"auto/ITable.md","filePath":"auto/ITable.md"}'),r={name:"auto/ITable.md"},i=a("",8),s=[i];function o(n,d,c,h,b,y){return l(),e("div",null,s)}const p=t(r,[["render",o]]);export{f as __pageData,p as default};
