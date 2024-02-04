@@ -8,12 +8,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SNow.Core.Extensions
 {
     /// <summary>
-    /// Handle Deserialize on HTTP requests
+    /// Handle Serialization on HTTP requests
     /// </summary>
     public static class HttpClientExtensions
     {
@@ -24,7 +25,7 @@ namespace SNow.Core.Extensions
         /// <param name="requestUri">Full request URI</param>
         /// <param name="authenticate">Execute the authentication method</param>
         /// <returns>An instance of the provided class, can also be a List<T></returns>
-        public static async Task<T> GetActionResultAsync<T>(this HttpClient client, string requestUri, Func<Task<string>> authenticate = null, ILogger logger = null)
+        public static async Task<T> GetActionResultAsync<T>(this HttpClient client, string requestUri, Func<Task<string>> authenticate = null, ILogger logger = null, CancellationToken? cancellationToken = null)
         {
             return await Policy.Handle<Exception>()
                 .RetryAsync(2, (exception, retry) =>
@@ -34,12 +35,12 @@ namespace SNow.Core.Extensions
                 })
                 .ExecuteAsync<T>(async () =>
                 {
-                    var response = await client.GetAsync(requestUri);
+                    var response = cancellationToken is null ? await client.GetAsync(requestUri) : await client.GetAsync(requestUri, (CancellationToken)cancellationToken);
                     if (response.StatusCode == HttpStatusCode.Unauthorized && authenticate != null)
                     {
                         var token = await authenticate();
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                        response = await client.GetAsync(requestUri);
+                        response = cancellationToken is null ? await client.GetAsync(requestUri) : await client.GetAsync(requestUri, (CancellationToken)cancellationToken);
                     }
 
                     await HandleUnssucessfullRequestAsync(response);
@@ -57,16 +58,17 @@ namespace SNow.Core.Extensions
         /// </summary>
         /// <typeparam name="T">A class containing props with attributes of type [JsonPropertyName]</typeparam>
         /// <param name="client"></param>
-        /// <param name="requestUri">Full request uri</param>
+        /// <param name="requestUri">Full request URI</param>
         /// <param name="data">Data to be sent, usually a model</param>
         /// <param name="authenticate"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>An instance of the provided class, can also be a List T </returns>
-        public static async Task<T> PostActionResultAsync<T>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate)
+        public static async Task<T> PostActionResultAsync<T>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate, CancellationToken? cancellationToken = null)
         {
             var json = JsonSerializer.Serialize(data, JsonConverterOptions.CustomSerializationOptions);
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             {
-                var response = await client.PostAsync(requestUri, httpContent);
+                var response = cancellationToken is null ? await client.PostAsync(requestUri, httpContent) : await client.PostAsync(requestUri, httpContent, (CancellationToken)cancellationToken);
                 // once we try to Post httpContent is disposed
                 if (response.StatusCode == HttpStatusCode.Unauthorized && authenticate != null)
                 {
@@ -74,7 +76,7 @@ namespace SNow.Core.Extensions
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                     httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                    response = await client.PostAsync(requestUri, httpContent);
+                    response = cancellationToken is null ? await client.PostAsync(requestUri, httpContent) : await client.PostAsync(requestUri, httpContent, (CancellationToken)cancellationToken);
                     httpContent.Dispose();
                 }
 
@@ -97,13 +99,14 @@ namespace SNow.Core.Extensions
         /// <param name="requestUri">Full request uri</param>
         /// <param name="data">Data to be sent, usually a model</param>
         /// <param name="authenticate"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>An instance of the provided class, can also be a List T</returns>
-        public static async Task<T> PutActionResultAsync<T>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate)
+        public static async Task<T> PutActionResultAsync<T>(this HttpClient client, string requestUri, object data, Func<Task<string>> authenticate, CancellationToken? cancellationToken = null)
         {
             var json = JsonSerializer.Serialize(data, JsonConverterOptions.CustomSerializationOptions);
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             {
-                var response = await client.PutAsync(requestUri, httpContent);
+                var response = cancellationToken is null ? await client.PutAsync(requestUri, httpContent) : await client.PutAsync(requestUri, httpContent, (CancellationToken)cancellationToken);
                 // once we try to Post httpContent is disposed
                 if (response.StatusCode == HttpStatusCode.Unauthorized && authenticate != null)
                 {
@@ -111,7 +114,7 @@ namespace SNow.Core.Extensions
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                     httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                    response = await client.PutAsync(requestUri, httpContent);
+                    response = cancellationToken is null ? await client.PutAsync(requestUri, httpContent) : await client.PutAsync(requestUri, httpContent, (CancellationToken)cancellationToken);
                     httpContent.Dispose();
                 }
 

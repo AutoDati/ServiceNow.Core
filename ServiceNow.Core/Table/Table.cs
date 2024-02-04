@@ -4,7 +4,6 @@ using SNow.Core.Extensions;
 using SNow.Core.Models;
 using SNow.Core.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -14,6 +13,7 @@ using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("ServiceNow.Core.Test")]
@@ -33,7 +33,6 @@ namespace SNow.Core
 
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}";
             return await _httpClient.GetActionResultAsync<JsonElement>(url, SN.AuthenticateAsync, _logger);
-
         }
 
         /// <inheritdoc/>
@@ -125,7 +124,7 @@ namespace SNow.Core
             {
                 try
                 {
-                    if(_logger != null)
+                    if (_logger != null)
                         _logger.LogInformation("{n} Paged{t}s: {time}", pagedData.Count, typeof(JsonElement).Name, DateTimeOffset.Now);
                     data.AddRange(pagedData);
 
@@ -141,6 +140,80 @@ namespace SNow.Core
                 }
             }
             return data;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<JsonElement>> ToListAsync(CancellationToken cancellationToken, int? pageNumber = null)
+        {
+            var url = pageNumber == null ? RequestGetUrl : RequestUrl + $"&sysparm_offset={pageNumber * _pageSize}";
+            _currentPage++;
+            var result = await _httpClient.GetActionResultAsync<List<JsonElement>>(url, SN.AuthenticateAsync, _logger, cancellationToken);
+
+            if (result.Count == 0)
+                _currentPage = 0;
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<JsonElement>> AllToListAsync(CancellationToken cancellationToken)
+        {
+            var page = 0;
+            var pagedData = await ToListAsync(cancellationToken, page++);
+
+            List<JsonElement> data = new List<JsonElement>();
+            while (pagedData.Count > 0)
+            {
+                try
+                {
+                    if (_logger != null)
+                        _logger.LogInformation("{n} Paged{t}s: {time}", pagedData.Count, typeof(JsonElement).Name, DateTimeOffset.Now);
+                    data.AddRange(pagedData);
+
+                    pagedData = await ToListAsync(cancellationToken, page++);
+                }
+                catch (Exception ex)
+                {
+                    if (_logger != null)
+                    {
+                        _logger.LogError("Error while retrieving {T}, {message} : {stack}", typeof(JsonElement).Name, ex.Message, ex.StackTrace);
+                        _logger.LogError("Ignoring page {p}...", RequestUrl);
+                    }
+                }
+            }
+            return data;
+        }
+
+        /// <inheritdoc/>
+        public async Task<JsonElement> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}";
+            return await _httpClient.GetActionResultAsync<JsonElement>(url, SN.AuthenticateAsync, _logger,  cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<JsonElement> CreateAsync(object model, CancellationToken cancellationToken)
+        {
+            var url = $"{SN.BaseAddress}/table/{_tableName}";
+
+            var result = await _httpClient.PostActionResultAsync<JsonElement>(url, model, SN.AuthenticateAsync, cancellationToken);
+            return result; ;
+        }
+
+        /// <inheritdoc/>
+        public async Task<JsonElement> UpdateAsync(Guid id, object data, CancellationToken cancellationToken, bool excludeReferenceLinks = true)
+        {
+            var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
+            var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}{excludeLinks}";
+            var result = await _httpClient.PutActionResultAsync<JsonElement>(url, data, SN.AuthenticateAsync, cancellationToken);
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            return await base.DeleteAsync(id, cancellationToken);
         }
     }
     /// <inheritdoc/>
@@ -206,11 +279,10 @@ namespace SNow.Core
 
             foreach (object attr in attrs)
             {
-                var snowFilterAttr = attr as SnowFilterAttribute;             
+                var snowFilterAttr = attr as SnowFilterAttribute;
                 _query = snowFilterAttr.Query;
             }
             #endregion
-
         }
 
 
@@ -265,7 +337,7 @@ namespace SNow.Core
             var visitor = new PrintingVisitor<T>(expr);
             visitor.Visit(expr);
             _query = visitor.query;
-            _query = _query.Replace("Convert(","").Replace("(", "").Replace(")", "");
+            _query = _query.Replace("Convert(", "").Replace("(", "").Replace(")", "");
 
             if (_withFilterAttribute)
                 _query += "^" + filterquery;
@@ -282,6 +354,49 @@ namespace SNow.Core
             {
                 _httpClient.DefaultRequestHeaders.Add(entry.Key, entry.Value);
             }
+            return this;
+        }
+
+        ///<inheritdoc/>
+        public ITable<T> WithQuery(Expression<Func<T, string>> expression)
+        {
+            if (_withFilterAttribute)
+                throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
+
+            var arguments = (expression.Body as MethodCallExpression)?.Arguments;
+            var query = arguments?[0].ToString().Replace("\"", "") ?? (expression.Body as ConstantExpression).Value.ToString();
+            var queryArguments = new List<string>();
+            if (arguments != null)
+                foreach (var arg in arguments.Skip(1))
+                {
+                    if (arg.GetType().Name == "NewArrayInitExpression")
+                    {
+                        throw new Exception("More than 3 Arguments in lambda expression!!!");
+                        //var argArray = arg.ToString().Replace("new [] {", "").Replace("}", "").Split(',');
+                        //foreach (Expression sub arg in (arg as MethodCallExpression).Arguments)
+                        //{
+                        //    var propName = subarg.ToString().Split('.')[1].Replace(", Object)", "");
+                        //    var attName = _props.Find(p => p.PropName == propName).AttName;
+
+                        //    //var externalArgName = arg.ToString().Contains(')') ? arg.ToString().Split(')')[1].Replace(".","") : null;
+                        //    var externalArgValue = subarg.ToString().Contains("value") ? Expression.Lambda<Func<Object>>(subarg).Compile()().ToString() : null;
+                        //    queryArguments.Add(externalArgValue ?? attName ?? propName.ToLower());
+                        //}
+                    }
+                    else
+                    {
+                        var propName = arg.ToString().Split('.')[1].Replace(", Object)", "").Replace(")", "");
+                        var attName = _props.Find(p => p.PropName == propName).AttName;
+
+                        //var externalArgName = arg.ToString().Contains(')') ? arg.ToString().Split(')')[1].Replace(".","") : null;
+                        var externalArgValue = arg.ToString().Contains("value") ? Expression.Lambda<Func<object>>(arg).Compile()().ToString() : null;
+                        queryArguments.Add(externalArgValue ?? attName ?? propName.ToLower());
+                    }
+                }
+
+            var result = string.Format(query, queryArguments.ToArray());
+            _query = Query.Parse(result);
+            _currentPage = 0;
             return this;
         }
 
@@ -356,6 +471,81 @@ namespace SNow.Core
             return data;
 
         }
+
+        /// <inheritdoc/>
+        public async Task<List<T>> ToListAsync(CancellationToken cancellationToken, int? page = null)
+        {
+            if (SN.Token == null && SN.BasicAuthParams == null)
+                await SN.AuthenticateAsync();
+            if (_httpClient.DefaultRequestHeaders.Authorization == null)
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", SN.Token);
+            var url = page == null ? RequestGetUrl : RequestUrl + $"&sysparm_offset={page * _pageSize}";
+            var result = await _httpClient.GetActionResultAsync<List<T>>(url, SN.AuthenticateAsync, _logger, cancellationToken);
+            _currentPage++;
+
+            if (result?.Count == 0)
+                _currentPage = 0;
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<T>> AllToListAsync(CancellationToken cancellationToken)
+        {
+            var page = 0;
+            var pagedData = await ToListAsync(cancellationToken, page++);
+
+            List<T> data = new List<T>();
+            while (pagedData.Count > 0)
+            {
+                try
+                {
+                    _logger.LogInformation("{n} Paged{t}s: {time}", pagedData.Count, typeof(T).Name, DateTimeOffset.Now);
+                    data.AddRange(pagedData);
+
+                    pagedData = await ToListAsync(cancellationToken, page++);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("Error while retrieving {T}, {message} : {stack}", typeof(T).Name, ex.Message, ex.StackTrace);
+                    _logger.LogError("Ignoring page {p}...", RequestUrl);
+                }
+            }
+            return data;
+        }
+
+        /// <inheritdoc/>
+        public async Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}";
+            return await _httpClient.GetActionResultAsync<T>(url, SN.AuthenticateAsync, _logger, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+           return await base.DeleteAsync(id, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<T> CreateAsync(object model, CancellationToken cancellationToken)
+        {
+            var url = $"{SN.BaseAddress}/table/{_tableName}";
+
+            var result = await _httpClient.PostActionResultAsync<T>(url, model, SN.AuthenticateAsync, cancellationToken);
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<T> UpdateAsync(Guid? id, object data, CancellationToken cancellationToken, bool excludeReferenceLinks = true)
+        {
+            var excludeLinks = excludeReferenceLinks ? "?sysparm_exclude_reference_link=true" : "";
+            var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}{excludeLinks}";
+
+            var result = await _httpClient.PutActionResultAsync<T>(url, data, SN.AuthenticateAsync, cancellationToken);
+
+            return result;
+        }
     }
 
     /// <summary>
@@ -415,7 +605,7 @@ namespace SNow.Core
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
             _httpClient.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
-            if(SN.BasicAuthParams != null)
+            if (SN.BasicAuthParams != null)
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", SN.BasicAuthParams);
         }
 
@@ -448,19 +638,20 @@ namespace SNow.Core
 
             if (query.Length > "sysparm_query=".Length)
             {
-                var splitted = query.Split(new string[] { "=", "!=", "^", "^OR", "OR", "LIKE", ">", ">=", "<", "<=", "ISNOTEMPTY", "ISEMPTY", "STARTSWITH", "ENDSWITH", "NOT LIKE"  }, StringSplitOptions.None);
+                var splitted = query.Split(new string[] { "=", "!=", "^", "^OR", "OR", "LIKE", ">", ">=", "<", "<=", "ISNOTEMPTY", "ISEMPTY", "STARTSWITH", "ENDSWITH", "NOT LIKE" }, StringSplitOptions.None);
                 for (int i = 0; i < splitted.Length; i++)
                 {
                     //Escape parameters.
-                    if(i > 0 && i % 2 == 0)
+                    if (i > 0 && i % 2 == 0)
                     {
                         query = query.Replace(splitted[i], Uri.EscapeDataString(splitted[i]));
                     }
                     //Fix Negates
-                    if (_select.Any(p => "Not" + p == splitted[i])){
+                    if (_select.Any(p => "Not" + p == splitted[i]))
+                    {
                         var prop = splitted[i];
                         var value = splitted[i + 1];
-                
+
                         query = NegateQuery(prop, value, query);
                     }
                 }
@@ -485,7 +676,7 @@ namespace SNow.Core
             Console.WriteLine($"Should negate between {prop} and {value} with operator: {_operator} ");
 
             var negatedOperator = "";
-            
+
             switch (_operator)
             {
                 case "=":
@@ -526,6 +717,27 @@ namespace SNow.Core
             {
                 await SN.AuthenticateAsync();
                 result = await _httpClient.DeleteAsync(url);
+            }
+            else if (result.IsSuccessStatusCode)
+                return true;
+
+            var execption = await result.GetException();
+            ConsoleColor.Red.WriteLine($"Error while Deleting record {id:N}: {execption.Error.Detail}");
+            return false;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken? cancellationToken)
+        {
+            if (SN.Token == null)
+                await SN.AuthenticateAsync();
+            var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}";
+
+            var result = cancellationToken is null ? await _httpClient.DeleteAsync(url) : await _httpClient.DeleteAsync(url, (CancellationToken)cancellationToken);
+            if (result.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                await SN.AuthenticateAsync();
+                result = cancellationToken is null ? await _httpClient.DeleteAsync(url) : await _httpClient.DeleteAsync(url, (CancellationToken)cancellationToken);
             }
             else if (result.IsSuccessStatusCode)
                 return true;
