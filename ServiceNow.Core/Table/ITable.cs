@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SNow.Core
@@ -59,6 +59,14 @@ namespace SNow.Core
         /// Makes the actual HTTP request
         /// </summary>
         /// <param name="pageNumber"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <returns>An generic json element of type Array</returns>
+        Task<List<JsonElement>> ToListAsync(CancellationToken cancellationToken, int? pageNumber = null);
+
+        /// <summary>
+        /// Makes the actual HTTP request
+        /// </summary>
+        /// <param name="pageNumber"></param>
         /// <returns>An generic json element of type Array</returns>
         Task<List<JsonElement>> ToListAsync(int? pageNumber = null);
 
@@ -66,7 +74,20 @@ namespace SNow.Core
         /// Makes HTTP requests to get all data (from all pages)
         /// </summary>
         /// <returns></returns>
+        Task<List<JsonElement>> AllToListAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Makes HTTP requests to get all data (from all pages)
+        /// </summary>
+        /// <returns></returns>
         Task<List<JsonElement>> AllToListAsync();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <returns></returns>
+        Task<JsonElement> GetByIdAsync(Guid id, CancellationToken cancellationToken);
         /// <summary>
         /// 
         /// </summary>
@@ -93,6 +114,29 @@ namespace SNow.Core
         /// <param name="excludeLinks"></param>
         /// <returns></returns>
         Task<JsonElement> UpdateAsync(Guid id, object data, bool excludeLinks = true);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <returns></returns>
+        Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <returns></returns>
+        Task<JsonElement> CreateAsync(object model, CancellationToken cancellationToken);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <param name="excludeLinks"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <returns></returns>
+        Task<JsonElement> UpdateAsync(Guid id, object data, CancellationToken cancellationToken, bool excludeLinks = true);
 
     }
 
@@ -120,7 +164,16 @@ namespace SNow.Core
         /// <param name="entries"></param>
         /// <returns></returns>
         ITable<T> SetHeaders(List<KeyValuePair<string, string>> entries);
-        
+
+        /// <summary>
+        /// The query must have only those operators
+        /// and, or, like, =, !=, startsWith, endsWith
+        /// see <see href="https://docs.servicenow.com/bundle/rome-application-development/page/integrate/inbound-rest/concept/c_RESTAPI.html">SN Rest Operators</see>
+        /// </summary>
+        /// <param name="expression">String that has access to the table model
+        /// ex.: x => $"{x.Name} like Something and {x.Age} = 10"</param>
+        ITable<T> WithQuery(Expression<Func<T, string>> expression);
+
         /// <summary>
         /// The maximum number of results returned per page (default: 10,000)
         /// </summary>
@@ -182,5 +235,47 @@ namespace SNow.Core
         /// <param name="excludeLinks"></param>
         /// <returns></returns>
         Task<T> UpdateAsync(Guid? id, object data, bool excludeLinks = true);
+        /// <summary>
+        /// Makes the actual HTTP Request
+        /// </summary>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <param name="pageNumber"></param>
+        /// <returns></returns>
+        Task<List<T>> ToListAsync(CancellationToken cancellationToken, int? pageNumber = null);
+        /// <summary>
+        /// Makes HTTP requests to get all data (from all pages)
+        /// </summary>
+        /// <returns></returns>
+        Task<List<T>> AllToListAsync(CancellationToken cancellationToken);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <returns></returns>
+        Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <returns></returns>
+        Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <returns></returns>
+        Task<T> CreateAsync(object model, CancellationToken cancellationToken);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <param name="cancellationToken"> A cancellation token that can be used by other objects or threads to receive</param>
+        /// <param name="excludeLinks"></param>
+        /// <returns></returns>
+        Task<T> UpdateAsync(Guid? id, object data, CancellationToken cancellationToken, bool excludeLinks = true);
     }
 }
