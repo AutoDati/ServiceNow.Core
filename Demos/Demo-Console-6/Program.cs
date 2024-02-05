@@ -1,7 +1,7 @@
 ﻿using SNow.Core.Authentication;
 using SNow.Core.Extensions;
 using SNow.Core;
-using Models;
+using Models6;
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");
 
@@ -23,10 +23,11 @@ Console.WriteLine("Hello, World!");
 
 
         var name = "Jimmie";
+        var date = DateTime.Now;
         var usersTable = ServiceNow
             .UsingTable<User>("sys_user")
             .Limit(2)
-            .Where(x => x.Name.Contains(name));
+            .Where(x => x.CreatedOn < date);
 
         var users = await usersTable.ToListAsync();
 
@@ -65,7 +66,7 @@ Console.WriteLine("Hello, World!");
             //.Select(new[] { "country", "state", "name", "u_city_code", "email", "user_name", "sys_id"})
             .Limit(2)
             .WithQuery("name like Jimmie and email like zarzyckiR");
-        ConsoleColor.Red.WriteLine(usersTableNotTyped.RequestUrl);
+        //ConsoleColor.Red.WriteLine(usersTableNotTyped.RequestUrl);
         var usersNotTyped = await usersTableNotTyped.ToListAsync();
 
         while (usersNotTyped.Count > 0)
