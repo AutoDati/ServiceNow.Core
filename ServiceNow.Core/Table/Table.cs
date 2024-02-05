@@ -334,11 +334,17 @@ namespace SNow.Core
             if (_withFilterAttribute)
                 filterquery = _query;// throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
 
-            var visitor = new PrintingVisitor<T>(expr);
-            visitor.Visit(expr);
-            _query = visitor.query;
-            _query = _query.Replace("Convert(", "").Replace("(", "").Replace(")", "");
 
+            var buildVisitor = new QueryBuilder<T>(expr);
+            buildVisitor.BuildQuery();
+            _query = buildVisitor.query;
+            Console.WriteLine(_query);
+            //var visitor = new PrintingVisitor<T>(expr);
+
+            //visitor.Visit(expr);
+            //_query = visitor.query;
+            _query = _query.Replace("Convert(", "").Replace("(", "").Replace(")", "");
+            //replace DateTime.Now
             if (_withFilterAttribute)
                 _query += "^" + filterquery;
 
@@ -647,7 +653,7 @@ namespace SNow.Core
                         query = query.Replace(splitted[i], Uri.EscapeDataString(splitted[i]));
                     }
                     //Fix Negates
-                    if (_select.Any(p => "Not" + p == splitted[i]))
+                    if (_select != null && _select.Any(p => "Not" + p == splitted[i]))
                     {
                         var prop = splitted[i];
                         var value = splitted[i + 1];

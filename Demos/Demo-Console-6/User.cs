@@ -3,7 +3,7 @@ using SNow.Core.Models;
 using System;
 using System.Text.Json.Serialization;
 
-namespace Models
+namespace Models6
 {
     [SnowTable("sys_user")]
     public class User : ServiceNowBaseModel
@@ -19,7 +19,7 @@ namespace Models
         public string LanID { get; set; }
 
         [JsonPropertyName("sys_created_on")]
-        public DateOnly CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
 
         public override string ToString()
         {
@@ -28,3 +28,5 @@ namespace Models
     }
 }
 
+//sys_updated_onONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()
+//sys_created_on < javascript:gs.dateGenerate('2024-02-14', '00:00:00')
