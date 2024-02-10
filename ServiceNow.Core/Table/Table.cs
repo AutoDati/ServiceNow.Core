@@ -86,7 +86,7 @@ namespace SNow.Core
         ///<inheritdoc/>
         public ITable WithQuery(string query)
         {
-            _query = Query.Parse(query);
+            _query = query;// Query.Parse(query);
             _currentPage = 0;
             return this;
         }
@@ -343,12 +343,12 @@ namespace SNow.Core
 
             //visitor.Visit(expr);
             //_query = visitor.query;
-            _query = _query.Replace("Convert(", "").Replace("(", "").Replace(")", "");
+            //_query = _query.Replace("Convert(", "").Replace("(", "").Replace(")", "");
             //replace DateTime.Now
             if (_withFilterAttribute)
                 _query += "^" + filterquery;
 
-            _query = Query.Parse(_query);
+            //_query = Query.Parse(_query);
             _currentPage = 0;
             return this;
         }
@@ -401,7 +401,7 @@ namespace SNow.Core
                 }
 
             var result = string.Format(query, queryArguments.ToArray());
-            _query = Query.Parse(result);
+            _query = result;// Query.Parse(result);
             _currentPage = 0;
             return this;
         }
