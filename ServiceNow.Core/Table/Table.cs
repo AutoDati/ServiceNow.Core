@@ -644,11 +644,11 @@ namespace SNow.Core
 
             if (query.Length > "sysparm_query=".Length)
             {
-                var splitted = query.Split(new string[] { "=", "!=", "^", "^OR", "OR", "LIKE", ">", ">=", "<", "<=", "ISNOTEMPTY", "ISEMPTY", "STARTSWITH", "ENDSWITH", "NOT LIKE" }, StringSplitOptions.None);
+                var splitted = query.Split(new string[] { "=", "!=", "^OR", "^", "OR", "LIKE", ">", ">=", "<", "<=", "ISNOTEMPTY", "ISEMPTY", "STARTSWITH", "ENDSWITH", "NOT LIKE" }, StringSplitOptions.None);
                 for (int i = 0; i < splitted.Length; i++)
                 {
                     //Escape parameters.
-                    if (i > 0 && i % 2 == 0)
+                    if (i > 0 && i % 2 == 0 && !String.IsNullOrEmpty(splitted[i]))
                     {
                         query = query.Replace(splitted[i], Uri.EscapeDataString(splitted[i]));
                     }

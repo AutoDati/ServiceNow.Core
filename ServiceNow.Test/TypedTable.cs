@@ -87,5 +87,13 @@ namespace Snow.Test
             //Assert
             UserTable.RequestUrl.Should().Contain($"{TestScope.Config.BaseAddress}/table/{TestScope.tableName}?sysparm_fields={String.Join(",", TestScope.PropNames2)}&sysparm_limit=10000&sysparm_query=NameINSTANCEOFsnow_table_name^Age!=10^nameLikeBottero&sysparm_exclude_reference_link=true");
         }
+
+        [Fact]        
+        public void ShouldHaveCorrectUrl()
+        {
+            var relTable = TestScope.RelationTable();
+            //
+            relTable.RequestUrl.Should().Be($"{TestScope.Config.BaseAddress}/table/cmdb_rel_ci?sysparm_fields=sys_id&sysparm_limit=10000&sysparm_query=installed_on.sys_class_name!=cmdb_ci_pc_hardware^display_nameNOT LIKEManagement%20Studio^display_nameSTARTSWITHSQL%20Server^display_nameENDSWITHIntegration%20Services^ORdisplay_nameLIKEEngine%20Services^ORdisplay_nameLIKEAnalysis%20Services^ORdisplay_nameENDSWITHReporting%20Services^ORdisplay_name=Microsoft%20Power%20BI%20Report%20Server&sysparm_exclude_reference_link=true");
+        }
     }
 }
