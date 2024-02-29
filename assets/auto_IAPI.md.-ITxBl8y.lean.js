@@ -1,1 +1,0 @@
-import{_ as t,c as e,o as a,U as s}from"./chunks/framework.WPXu0_gW.js";const P=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"auto/IAPI.md","filePath":"auto/IAPI.md"}'),i={name:"auto/IAPI.md"},n=s("",7),r=[n];function o(l,d,c,h,I,p){return a(),e("div",null,r)}const _=t(i,[["render",o]]);export{P as __pageData,_ as default};
