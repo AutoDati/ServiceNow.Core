@@ -9,7 +9,7 @@ namespace Snow.Test
     {
         public static AuthenticationConfig Config => new ()
         {
-            BaseAddress = "https://someUrl.com/api/now/",
+            BaseAddress = "https://someUrl.com/api/now",
             ClientSecret = "Blablabla"
         };
         public static string tableName => "sys_user";
@@ -33,5 +33,12 @@ namespace Snow.Test
             return (Table<DumpUser2>)UserTable;
         }
 
+        public static Table<Relations> RelationTable()
+        {
+            var SN = new ServiceNow(Config);
+
+            var relTable = SN.UsingTable<Relations>();
+            return (Table<Relations>)relTable;
+        }
     }
 }
