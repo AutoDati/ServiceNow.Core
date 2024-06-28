@@ -188,7 +188,7 @@ namespace SNow.Core
         public async Task<JsonElement> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var url = $"{SN.BaseAddress}/table/{_tableName}/{id:N}";
-            return await _httpClient.GetActionResultAsync<JsonElement>(url, SN.AuthenticateAsync, _logger,  cancellationToken);
+            return await _httpClient.GetActionResultAsync<JsonElement>(url, SN.AuthenticateAsync, _logger, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -366,8 +366,8 @@ namespace SNow.Core
         ///<inheritdoc/>
         public ITable<T> WithQuery(Expression<Func<T, string>> expression)
         {
-            if (_withFilterAttribute)
-                throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
+            //if (_withFilterAttribute)
+            //    throw new InvalidOperationException("Query set with SNow Filter Attribute, change the query is not allowed!");
 
             var arguments = (expression.Body as MethodCallExpression)?.Arguments;
             var query = arguments?[0].ToString().Replace("\"", "") ?? (expression.Body as ConstantExpression).Value.ToString();
@@ -401,7 +401,8 @@ namespace SNow.Core
                 }
 
             var result = string.Format(query, queryArguments.ToArray());
-            _query = Query.Parse(result);
+
+            _query = String.IsNullOrEmpty(_query) ? Query.Parse(result) : _query + '^' + Query.Parse(result);
             _currentPage = 0;
             return this;
         }
@@ -530,7 +531,7 @@ namespace SNow.Core
         /// <inheritdoc/>
         public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-           return await base.DeleteAsync(id, cancellationToken);
+            return await base.DeleteAsync(id, cancellationToken);
         }
 
         /// <inheritdoc/>
