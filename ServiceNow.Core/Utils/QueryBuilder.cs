@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace SNow.Core.Utils
 {
@@ -104,9 +103,9 @@ namespace SNow.Core.Utils
             //assume we only allow not (!) unary operator:
             if (node.NodeType != ExpressionType.Not)
                 throw new NotSupportedException("Only not(\"!\") unary operator is supported!");
-            Console.WriteLine("should detec Contains here");
-            Console.WriteLine(node.Operand);
-            var negated = _methodNames.Keys.FirstOrDefault(k => node.Operand.ToString().Contains(k)) ?? "";            
+            //Console.WriteLine("should detec Contains here");
+            //Console.WriteLine(node.Operand);
+            var negated = _methodNames.Keys.FirstOrDefault(k => node.Operand.ToString().Contains(k)) ?? "";
             if (node.NodeType == ExpressionType.Not && negated != null)
             {
                 _wasNegated = true;
@@ -127,9 +126,9 @@ namespace SNow.Core.Utils
         //corresponds to: and, or, greater than, less than, etc.
         protected override Expression VisitBinary(BinaryExpression node)
         {
-            Visit(node.Left);                                                  
+            Visit(node.Left);
             _queryStringBuilder.Append($"{_logicalOperators[node.NodeType]}");
-            Visit(node.Right);                                                
+            Visit(node.Right);
 
             return node;
         }
@@ -149,7 +148,7 @@ namespace SNow.Core.Utils
                     if (attr == null)
                         throw new InvalidOperationException($"Model {className} missing {nameof(SnowTableAttribute)} ");
 
-                    Console.WriteLine($"${className}  ==> ${attr.Name}");
+                    //Console.WriteLine($"${className}  ==> ${attr.Name}");
                     //query = query.Replace(" Is ", " INSTANCEOF ");
                     //query = query.Replace(className, attr.Name);
                     Debug.Print(attr.Name);
@@ -158,8 +157,8 @@ namespace SNow.Core.Utils
             }
 
             var vi = base.VisitTypeBinary(node);
-            
-             _queryStringBuilder.Append($"{_logicalOperators[node.NodeType]}{attr.Name}");
+
+            _queryStringBuilder.Append($"{_logicalOperators[node.NodeType]}{attr.Name}");
 
             return vi;
         }
@@ -212,7 +211,7 @@ namespace SNow.Core.Utils
             else
             {
                 //corresponds to: x.Customer - just write "Customer"
-                var attributeName = _jsonProperties.FirstOrDefault(x => x.prop == node.Member.Name).attr ?? node.Member.Name;
+                var attributeName = _jsonProperties.FirstOrDefault(x => x.prop == node.Member.Name).attr ?? ClassReflections.ConvertCamelToSnake(node.Member.Name);
                 _queryStringBuilder.Append(attributeName);
 
                 if (_expressions.Count > 0)
@@ -260,5 +259,6 @@ namespace SNow.Core.Utils
                     return input.ToString();
             }
         }
+
     }
 }

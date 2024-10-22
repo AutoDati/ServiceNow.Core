@@ -9,6 +9,8 @@ namespace Snow.Test
         [JsonPropertyName("strange_name")]
         public string Name { get; set; }
         public int Age { get; set; }
+
+        public string CamelCase { get; set; }
     }
 
     [SnowFilter("nameLikeBottero")]
@@ -21,7 +23,7 @@ namespace Snow.Test
 
     [SnowTable("cmdb_rel_ci")]
     [SnowFilter("installed_on.sys_class_name!=cmdb_ci_pc_hardware^display_nameNOT LIKEManagement Studio^display_nameSTARTSWITHSQL Server^display_nameENDSWITHIntegration Services^ORdisplay_nameLIKEEngine Services^ORdisplay_nameLIKEAnalysis Services^ORdisplay_nameENDSWITHReporting Services^ORdisplay_name=Microsoft Power BI Report Server")]
-    public class Relations: ServiceNowBaseModel
+    public class Relations : ServiceNowBaseModel
     {
 
     }

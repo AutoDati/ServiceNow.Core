@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace SNow.Core.Utils
 {
@@ -42,7 +41,7 @@ namespace SNow.Core.Utils
             var props = typeof(T).GetProperties();
             foreach (PropertyInfo prop in props)
             {
-                string propName = prop.Name.ToLower();
+                string propName = prop.Name;
                 string jsonName = null;
 
                 object[] attrs = prop.GetCustomAttributes(true);
@@ -55,9 +54,25 @@ namespace SNow.Core.Utils
 
                     }
                 }
-                _dict.Add(jsonName ?? propName);
+                _dict.Add(jsonName ?? ConvertCamelToSnake(propName));
             }
             return _dict;
         }
+
+        public static string ConvertCamelToSnake(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            // Regular expression to find uppercase letters and add an underscore before them
+            string result = Regex.Replace(input, "([a-z0-9])([A-Z])", "$1_$2");
+
+            // Convert to lower case
+            return result.ToLower();
+        }
     }
+
+
 }
