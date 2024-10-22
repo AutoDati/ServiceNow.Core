@@ -35,6 +35,8 @@ Make request using fluent API!
 
 ### Basic Examples
 
+All params are transformed to snake_case.
+
 - Typed (Create any class derived from ServiceNowBaseModel class, so we have an Id Guid)
 ``` C#
 //Creating an ServiceNow instance
@@ -151,5 +153,5 @@ That happens because ServiceNow not always return null, in those cases it return
 
 ## Authors
 
-Emerson Bottero Branco DBAM Automation
+Emerson Bottero Branco
 

@@ -13,7 +13,7 @@
 		<TargetFrameworks>net472;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<RootNamespace>SNow.Core</RootNamespace>
-		<Version>1.1.5</Version>
+		<Version>1.1.6</Version>
 		<Authors>Emerson Bottero Branco</Authors>
 		<Company></Company>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
